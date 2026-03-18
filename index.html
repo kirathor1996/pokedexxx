@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Pokédex"/>
 <meta name="theme-color" content="#0d0d0d"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <title>Pokédex</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -860,6 +863,16 @@ document.getElementById('search').addEventListener('input',()=>{page=0;applyF();
 document.getElementById('type-filter').addEventListener('change',()=>{page=0;applyF();renderGrid();});
 
 loadPokedex();
+</script>
+
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js")
+      .then(r => console.log("SW registrado:", r.scope))
+      .catch(e => console.log("SW error:", e));
+  });
+}
 </script>
 </body>
 </html>
