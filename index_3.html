@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Pokédex"/>
+<meta name="theme-color" content="#0d0d0d"/>
+<title>Pokédex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #E8192C;
+  --red-dark: #a80f1e;
+  --red-dim: #3a0a10;
+  --red-glow: rgba(232,25,44,0.25);
+  --bg: #0d0d0d;
+  --bg2: #161616;
+  --bg3: #1e1e1e;
+  --bg4: #252525;
+  --border: rgba(255,255,255,0.07);
+  --border-red: rgba(232,25,44,0.3);
+  --text: #f0f0f0;
+  --text2: #888;
+  --text3: #555;
+  --gold: #FFD700;
+  --cyan: #00e5ff;
+  --green: #00ff88;
+  --purple: #bb88ff;
+  --font-main: 'Rajdhani', sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-vt: 'VT323', monospace;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{font-family:var(--font-main);background:var(--bg);color:var(--text);}
+body{background:var(--bg);min-height:100vh;overflow-x:hidden;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--red-dark);border-radius:3px;}
+
+/* ===================== MOBILE (< 768px) ===================== */
+.pw{width:100%;max-width:100%;background:var(--bg);}
+.db{background:var(--bg);min-height:calc(100vh - 53px);padding:12px 12px 90px;}
+
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(13,13,13,0.97);
+  border-top:1px solid var(--border-red);
+  display:flex;z-index:30;
+  padding-bottom:env(safe-area-inset-bottom);
+  backdrop-filter:blur(20px);
+}
+
+.detail-drawer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);
+  border-top:1px solid var(--border-red);
+  border-radius:20px 20px 0 0;
+  z-index:50;
+  transform:translateY(100%);
+  transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
+  max-height:90vh;overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -20px 60px rgba(232,25,44,0.15);
+}
+.detail-drawer.open{transform:translateY(0);}
+
+.note-modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:60;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
+.note-modal.open{display:flex;}
+.note-modal-inner{
+  background:var(--bg2);border:1px solid var(--border-red);
+  border-radius:20px 20px 0 0;padding:20px 20px 40px;
+  width:100%;
+  box-shadow:0 -20px 60px rgba(232,25,44,0.2);
+}
+
+/* ===================== TABLET (768px - 1099px) ===================== */
+@media(min-width:768px){
+  body{background:#080808;}
+  .pw{max-width:600px;margin:0 auto;background:var(--bg);min-height:100vh;box-shadow:0 0 60px rgba(0,0,0,0.8);}
+  .db{padding:16px 20px 100px;}
+  .bottom-nav{max-width:600px;left:50%;transform:translateX(-50%);}
+  .detail-drawer{max-width:600px;left:50%;transform:translateX(-50%) translateY(100%);}
+  .detail-drawer.open{transform:translateX(-50%) translateY(0);}
+  .note-modal-inner{max-width:600px;}
+  .pokemon-grid{grid-template-columns:repeat(5,1fr);}
+  .regional-grid{grid-template-columns:repeat(5,1fr);}
+}
+
+/* ===================== DESKTOP (>= 1100px) ===================== */
+@media(min-width:1100px){
+  body{background:#060606;}
+
+  .pw{
+    max-width:1280px;width:100%;margin:0 auto;
+    display:grid;
+    grid-template-columns:260px 1fr;
+    grid-template-rows:57px 1fr;
+    min-height:100vh;
+    background:transparent;
+  }
+
+  /* Header full width */
+  .dh{
+    grid-column:1/-1;grid-row:1;
+    padding:14px 28px;
+  }
+
+  /* Left sidebar */
+  .db{
+    grid-column:1;grid-row:2;
+    background:var(--bg2);
+    border-right:1px solid var(--border);
+    padding:20px 16px;
+    position:sticky;top:57px;
+    height:calc(100vh - 57px);
+    overflow-y:auto;
+    display:flex;flex-direction:column;gap:0;
+  }
+
+  /* Right content area */
+  .main-content-area{
+    grid-column:2;grid-row:2;
+    padding:20px 24px;
+    overflow-y:auto;
+    height:calc(100vh - 57px);
+    background:var(--bg);
+  }
+
+  /* Hide mobile nav */
+  .bottom-nav{display:none !important;}
+
+  /* Show desktop sidebar tabs */
+  .desktop-tabs{display:flex !important;flex-direction:column;gap:3px;margin-bottom:0;}
+
+  /* Desktop sidebar tab style */
+  .desktop-tab{
+    display:flex;align-items:center;gap:10px;
+    background:transparent;border:1px solid transparent;
+    color:var(--text3);font-family:var(--font-main);font-size:15px;font-weight:700;
+    padding:11px 14px;cursor:pointer;border-radius:var(--radius-sm);
+    text-align:left;width:100%;transition:all 0.2s;
+  }
+  .desktop-tab:hover{background:var(--bg3);color:var(--text2);}
+  .desktop-tab.active{background:var(--red-dim);border-color:var(--border-red);color:var(--red);}
+  .desktop-tab .dtab-ico{font-size:17px;width:22px;text-align:center;flex-shrink:0;}
+  .desktop-tab.shiny-dt.active{background:rgba(255,215,0,0.08);border-color:rgba(255,215,0,0.25);color:var(--gold);}
+  .desktop-tab.regional-dt.active{background:rgba(187,136,255,0.08);border-color:rgba(187,136,255,0.25);color:var(--purple);}
+  .desktop-tab.notes-dt.active{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.25);color:var(--cyan);}
+  .desktop-tab.export-dt.active{background:rgba(0,255,136,0.08);border-color:rgba(0,255,136,0.25);color:var(--green);}
+
+  /* Drawer: fixed panel on right side, appears as a card */
+  .drawer-overlay{display:none !important;}
+  .detail-drawer{
+    position:static !important;
+    transform:none !important;
+    max-height:none !important;
+    border-radius:var(--radius) !important;
+    border:1px solid var(--border-red) !important;
+    box-shadow:0 0 30px rgba(232,25,44,0.08) !important;
+    display:none;
+    margin-bottom:20px;
+    background:var(--bg2) !important;
+  }
+  .detail-drawer.open{display:block !important;}
+  .drawer-handle{display:none;}
+  .drawer-inner{padding:20px 20px 20px !important;}
+
+  /* Bigger grid */
+  .pokemon-grid{grid-template-columns:repeat(6,1fr) !important;gap:8px;}
+  .regional-grid{grid-template-columns:repeat(6,1fr) !important;}
+
+  /* Note modal centered */
+  .note-modal{align-items:center !important;}
+  .note-modal-inner{border-radius:var(--radius) !important;max-width:520px;padding:28px !important;}
+
+  /* Desktop close button on drawer */
+  #drawer-close-btn{display:flex !important;position:absolute;top:14px;right:16px;cursor:pointer;color:var(--text3);font-size:22px;z-index:2;width:32px;height:32px;align-items:center;justify-content:center;border-radius:50%;transition:all 0.2s;}
+  #drawer-close-btn:hover{background:var(--bg3);color:var(--text);}
+  .detail-drawer{position:relative !important;}
+
+
+@media(min-width:1400px){
+  .pw{max-width:1440px;grid-template-columns:280px 1fr;}
+  .pokemon-grid{grid-template-columns:repeat(7,1fr) !important;}
+}
+
+.dh{
+  background:linear-gradient(180deg,#1a0305 0%,#0d0d0d 100%);
+  border-bottom:1px solid var(--border-red);
+  padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:20;
+  backdrop-filter:blur(10px);
+}
+.dex-logo{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.logo-circle{
+  width:24px;height:24px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,#fff 0%,#88ccff 30%,#0066cc 70%);
+  border:2px solid rgba(255,255,255,0.4);
+  box-shadow:0 0 10px rgba(0,150,255,0.6);
+  flex-shrink:0;
+}
+.logo-dots{display:flex;gap:3px;align-items:center;}
+.ldot{width:7px;height:7px;border-radius:50%;}
+.ldot-r{background:#E8192C;box-shadow:0 0 4px #E8192C;}
+.ldot-y{background:#FFD700;box-shadow:0 0 4px #FFD700;}
+.ldot-g{background:#00ff88;box-shadow:0 0 4px #00ff88;}
+.dh-title{
+  flex:1;text-align:center;
+  font-family:var(--font-pixel);font-size:6px;
+  color:var(--text2);letter-spacing:2px;
+  text-transform:uppercase;
+}
+.dh-title span{color:var(--red);}
+
+/* BODY */
+.db{background:var(--bg);min-height:calc(100vh - 53px);padding:12px 12px 90px;}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+  background:rgba(13,13,13,0.97);
+  border-top:1px solid var(--border-red);
+  display:flex;z-index:30;
+  padding-bottom:env(safe-area-inset-bottom);
+  backdrop-filter:blur(20px);
+}
+.nav-btn{
+  flex:1;padding:10px 4px 8px;text-align:center;cursor:pointer;
+  border:none;background:transparent;color:var(--text3);
+  font-family:var(--font-pixel);font-size:4px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  transition:all 0.2s;letter-spacing:0.5px;
+}
+.nav-btn .nav-ico{font-size:16px;line-height:1;transition:all 0.2s;}
+.nav-btn.active{color:var(--red);}
+.nav-btn.active .nav-ico{filter:drop-shadow(0 0 4px var(--red));}
+.nav-btn.shiny-nav.active{color:var(--gold);}
+.nav-btn.shiny-nav.active .nav-ico{filter:drop-shadow(0 0 4px var(--gold));}
+.nav-btn.regional-nav.active{color:var(--purple);}
+.nav-btn.regional-nav.active .nav-ico{filter:drop-shadow(0 0 4px var(--purple));}
+.nav-btn.notes-nav.active{color:var(--cyan);}
+.nav-btn.notes-nav.active .nav-ico{filter:drop-shadow(0 0 4px var(--cyan));}
+.nav-btn.export-nav.active{color:var(--green);}
+.nav-btn.export-nav.active .nav-ico{filter:drop-shadow(0 0 4px var(--green));}
+
+/* SEARCH */
+.search-bar{display:flex;gap:8px;margin-bottom:10px;}
+.search-box{
+  flex:1;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font-main);font-size:15px;font-weight:500;
+  padding:10px 14px;outline:none;border-radius:var(--radius-sm);
+  transition:border-color 0.2s;
+}
+.search-box:focus{border-color:var(--red);}
+.search-box::placeholder{color:var(--text3);}
+.type-select{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font-main);font-size:14px;font-weight:500;
+  padding:10px 8px;outline:none;border-radius:var(--radius-sm);min-width:90px;
+}
+
+/* GEN SCROLL */
+.gen-scroll{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;scrollbar-width:none;}
+.gen-scroll::-webkit-scrollbar{display:none;}
+.gen-btn{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-family:var(--font-main);font-size:12px;font-weight:600;
+  padding:6px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  border-radius:20px;min-height:30px;transition:all 0.2s;letter-spacing:0.5px;
+}
+.gen-btn.active{background:var(--red-dim);border-color:var(--red);color:var(--red);box-shadow:0 0 8px var(--red-glow);}
+
+/* FILTER PILLS */
+.filter-pills{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;scrollbar-width:none;}
+.filter-pills::-webkit-scrollbar{display:none;}
+.pill{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-family:var(--font-main);font-size:11px;font-weight:600;
+  padding:6px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  border-radius:20px;min-height:28px;display:flex;align-items:center;
+  transition:all 0.2s;letter-spacing:0.5px;text-transform:uppercase;
+}
+.pill.active{background:var(--red-dim);border-color:var(--red);color:#fff;}
+
+/* STATS BAR */
+.stats-bar{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:8px 14px;margin-bottom:10px;
+  display:flex;justify-content:space-between;border-radius:var(--radius-sm);
+  flex-wrap:wrap;gap:4px;
+}
+.stats-bar span{color:var(--text2);font-size:12px;font-weight:600;letter-spacing:0.5px;}
+.stats-bar .s-red{color:var(--red);}
+.stats-bar .s-gold{color:var(--gold);}
+
+/* GRID */
+.pokemon-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;margin-bottom:10px;
+}
+@media(min-width:380px){.pokemon-grid{grid-template-columns:repeat(5,1fr);}}
+
+.poke-card{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:6px 4px;text-align:center;cursor:pointer;
+  position:relative;border-radius:var(--radius-sm);
+  transition:all 0.15s;
+}
+.poke-card:active{transform:scale(0.92);}
+.poke-card:hover{border-color:rgba(255,255,255,0.15);}
+.poke-card.caught{border-color:var(--red);background:linear-gradient(135deg,#1a0305 0%,#0d0d0d 100%);}
+.poke-card.caught::before{content:'';position:absolute;inset:0;border-radius:var(--radius-sm);box-shadow:inset 0 0 12px var(--red-glow);pointer-events:none;}
+.poke-card.shiny-caught{border-color:var(--gold);background:linear-gradient(135deg,#1a1500 0%,#0d0d0d 100%);}
+.poke-card.shiny-caught::before{content:'';position:absolute;inset:0;border-radius:var(--radius-sm);box-shadow:inset 0 0 12px rgba(255,215,0,0.15);pointer-events:none;}
+.poke-card.selected{border-color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,0.3);}
+.poke-card.has-note::after{content:'✎';position:absolute;bottom:3px;right:4px;font-size:8px;color:var(--cyan);opacity:0.8;}
+
+.caught-mark{position:absolute;top:4px;right:4px;width:6px;height:6px;background:var(--red);border-radius:50%;display:none;box-shadow:0 0 4px var(--red);}
+.poke-card.caught .caught-mark,.poke-card.shiny-caught .caught-mark{display:block;}
+.poke-card.shiny-caught .caught-mark{background:var(--gold);box-shadow:0 0 4px var(--gold);}
+.shiny-badge{position:absolute;top:3px;left:4px;font-size:8px;display:none;line-height:1;color:var(--gold);}
+.poke-card.shiny-caught .shiny-badge{display:block;}
+
+.poke-num{color:var(--text3);font-size:9px;font-weight:700;margin-bottom:2px;font-family:var(--font-main);}
+.poke-card.caught .poke-num{color:var(--red);}
+.poke-card.shiny-caught .poke-num{color:var(--gold);}
+
+.poke-img{width:100%;max-width:56px;height:auto;aspect-ratio:1;image-rendering:pixelated;filter:brightness(0.25) saturate(0);}
+.poke-card.caught .poke-img,.poke-card.shiny-caught .poke-img{filter:none;drop-shadow:none;}
+
+.poke-name{color:var(--text3);font-size:9px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;font-family:var(--font-main);letter-spacing:0.3px;}
+.poke-card.caught .poke-name{color:var(--text);}
+.poke-card.shiny-caught .poke-name{color:var(--gold);}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;}
+.page-btn{
+  background:var(--bg3);border:1px solid var(--border-red);
+  color:var(--red);font-family:var(--font-main);font-size:13px;font-weight:700;
+  padding:10px 20px;cursor:pointer;border-radius:var(--radius-sm);
+  min-height:40px;transition:all 0.2s;letter-spacing:1px;
+}
+.page-btn:active{background:var(--red-dim);}
+.page-info{color:var(--text2);font-size:12px;font-weight:600;text-align:center;font-family:var(--font-main);}
+
+/* DRAWER */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:40;display:none;backdrop-filter:blur(4px);}
+.drawer-overlay.open{display:block;}
+.detail-drawer{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;
+  background:var(--bg2);
+  border-top:1px solid var(--border-red);
+  border-radius:20px 20px 0 0;
+  z-index:50;
+  transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);
+  max-height:90vh;overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -20px 60px rgba(232,25,44,0.15);
+}
+.detail-drawer.open{transform:translateX(-50%) translateY(0);}
+.drawer-handle{width:40px;height:4px;background:var(--bg4);border-radius:2px;margin:14px auto 10px;}
+.drawer-inner{padding:0 16px 110px;}
+
+.drawer-header{margin-bottom:12px;}
+.drawer-name{color:var(--text);font-family:var(--font-main);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.drawer-num{color:var(--red);font-size:12px;font-weight:600;margin-top:2px;font-family:var(--font-main);letter-spacing:1px;}
+
+.drawer-imgs{display:flex;gap:12px;justify-content:center;margin-bottom:14px;}
+.drawer-img-box{text-align:center;}
+.drawer-img-lbl{color:var(--text3);font-size:10px;font-weight:700;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;font-family:var(--font-main);}
+.drawer-img-lbl.shiny-lbl{color:var(--gold);}
+.drawer-art{width:90px;height:90px;image-rendering:pixelated;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5));}
+
+.type-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
+.type-badge{font-family:var(--font-main);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase;}
+
+/* CATCH ROW */
+.catch-row{display:grid;grid-template-columns:1fr 1fr 48px;gap:6px;margin-bottom:14px;}
+.catch-btn{
+  background:var(--bg3);border:1px solid var(--border-red);
+  color:var(--red);font-family:var(--font-main);font-size:12px;font-weight:700;
+  padding:12px 4px;cursor:pointer;border-radius:var(--radius-sm);
+  text-align:center;min-height:44px;transition:all 0.2s;
+  letter-spacing:0.5px;text-transform:uppercase;
+}
+.catch-btn:active{background:var(--red-dim);}
+.catch-btn.caught-btn{background:var(--red-dim);border-color:var(--red);color:#fff;}
+.shiny-catch-btn{border-color:rgba(255,215,0,0.4);color:var(--gold);}
+.shiny-catch-btn:active{background:rgba(255,215,0,0.1);}
+.shiny-catch-btn.caught-btn{background:rgba(255,215,0,0.1);border-color:var(--gold);color:var(--gold);}
+.note-btn{border-color:rgba(0,229,255,0.3);color:var(--cyan);font-size:16px;}
+.note-btn:active{background:rgba(0,229,255,0.1);}
+
+/* DRAWER TABS */
+.drawer-tabs{display:flex;gap:2px;margin-bottom:14px;background:var(--bg3);border-radius:var(--radius-sm);padding:3px;}
+.dtab{
+  flex:1;background:transparent;border:none;
+  color:var(--text3);font-family:var(--font-main);font-size:12px;font-weight:700;
+  padding:8px 4px;cursor:pointer;text-align:center;
+  border-radius:6px;min-height:32px;transition:all 0.2s;
+  letter-spacing:0.5px;text-transform:uppercase;
+}
+.dtab.active{background:var(--red);color:#fff;box-shadow:0 2px 8px var(--red-glow);}
+
+.drawer-section{display:none;}
+.drawer-section.visible{display:block;}
+
+/* STATS */
+.stat-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.stat-label{color:var(--text3);font-size:11px;font-weight:700;width:30px;flex-shrink:0;letter-spacing:0.5px;}
+.stat-bar-bg{flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.stat-bar-fill{height:100%;border-radius:4px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);}
+.stat-val{color:var(--text);font-size:12px;font-weight:700;width:28px;text-align:right;flex-shrink:0;}
+.stat-total{color:var(--text2);font-size:11px;text-align:right;margin-top:8px;font-weight:600;padding-top:6px;border-top:1px solid var(--border);}
+
+/* ABILITIES */
+.ability-list{display:flex;flex-direction:column;gap:8px;}
+.ability-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;transition:border-color 0.2s;}
+.ability-card.hidden-ability{border-color:rgba(187,136,255,0.3);background:rgba(187,136,255,0.05);}
+.ability-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.ability-name{color:var(--text);font-family:var(--font-main);font-size:14px;font-weight:700;flex:1;text-transform:uppercase;letter-spacing:0.5px;}
+.ability-card.hidden-ability .ability-name{color:var(--purple);}
+.ability-hidden-tag{background:rgba(187,136,255,0.15);color:var(--purple);font-family:var(--font-main);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;border:1px solid rgba(187,136,255,0.3);}
+.ability-desc{color:var(--text2);font-family:var(--font-main);font-size:13px;line-height:1.5;font-weight:400;}
+.ability-loading{color:var(--text3);font-size:12px;text-align:center;padding:20px;font-family:var(--font-main);}
+
+/* INFO */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.info-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;}
+.info-label{color:var(--text3);font-size:10px;font-weight:700;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;}
+.info-val{color:var(--text);font-family:var(--font-main);font-size:18px;font-weight:700;}
+.evolutions-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;}
+.evo-label{color:var(--text3);font-size:10px;font-weight:700;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase;}
+.evo-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.evo-item{text-align:center;cursor:pointer;padding:6px;border-radius:var(--radius-sm);transition:background 0.2s;}
+.evo-item:active{background:var(--bg4);}
+.evo-img{width:52px;height:52px;image-rendering:pixelated;}
+.evo-name{color:var(--text2);font-size:10px;font-weight:600;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:56px;font-family:var(--font-main);text-transform:uppercase;}
+.evo-arrow{color:var(--red);font-size:18px;font-weight:700;}
+
+/* FORMS GALLERY */
+.forms-section{margin-top:14px;}
+.forms-title{color:var(--text3);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-family:var(--font-main);}
+.forms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.form-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 8px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.form-card:active{transform:scale(0.97);}
+.form-card.regional-form{border-color:rgba(187,136,255,0.25);}
+.form-card:hover{border-color:rgba(255,255,255,0.15);}
+.form-card-label{color:var(--text3);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.form-card-label.shiny-lbl{color:var(--gold);}
+.form-card-label.regional-lbl{color:var(--purple);}
+.form-imgs-row{display:flex;gap:6px;justify-content:center;align-items:flex-end;}
+.form-img-box{text-align:center;}
+.form-img-sublbl{font-size:9px;color:var(--text3);margin-bottom:3px;font-family:var(--font-main);}
+.form-img-sublbl.s-lbl{color:var(--gold);}
+.form-art{width:70px;height:70px;image-rendering:pixelated;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));}
+.form-region-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px;font-family:var(--font-main);letter-spacing:0.5px;}
+.form-types{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
+.form-type-badge{font-family:var(--font-main);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+
+/* POKEDEX DESCRIPTION */
+.poke-desc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;}
+.poke-desc-text{color:var(--text2);font-family:var(--font-main);font-size:14px;line-height:1.6;font-style:italic;}
+.poke-desc-loading{color:var(--text3);font-size:12px;font-family:var(--font-main);}
+.poke-genus{color:var(--red);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:var(--font-main);}
+
+.no-forms{color:var(--text3);font-size:12px;text-align:center;padding:16px;font-family:var(--font-main);}
+
+.note-preview{
+  color:var(--cyan);font-family:var(--font-main);font-size:14px;
+  margin-top:10px;padding:10px 12px;
+  background:rgba(0,229,255,0.05);
+  border-left:2px solid var(--cyan);border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  word-break:break-word;line-height:1.5;
+}
+
+/* NOTE MODAL */
+.note-modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:60;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
+.note-modal.open{display:flex;}
+.note-modal-inner{
+  background:var(--bg2);border:1px solid var(--border-red);
+  border-radius:20px 20px 0 0;padding:20px 20px 40px;
+  width:100%;max-width:480px;
+  box-shadow:0 -20px 60px rgba(232,25,44,0.2);
+}
+.note-modal-title{color:var(--text);font-family:var(--font-main);font-size:16px;font-weight:700;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;}
+.note-textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font-main);font-size:15px;
+  padding:12px;outline:none;resize:none;height:110px;border-radius:var(--radius-sm);
+  line-height:1.5;transition:border-color 0.2s;
+}
+.note-textarea:focus{border-color:var(--cyan);}
+.note-modal-btns{display:flex;gap:8px;margin-top:12px;}
+.note-save-btn{
+  flex:1;background:var(--red);border:none;color:#fff;
+  font-family:var(--font-main);font-size:14px;font-weight:700;
+  padding:14px;cursor:pointer;border-radius:var(--radius-sm);min-height:48px;
+  letter-spacing:0.5px;text-transform:uppercase;transition:all 0.2s;
+}
+.note-save-btn:active{background:var(--red-dark);}
+.note-cancel-btn{
+  background:var(--bg3);border:1px solid var(--border);color:var(--text2);
+  font-family:var(--font-main);font-size:14px;font-weight:700;
+  padding:14px 20px;cursor:pointer;border-radius:var(--radius-sm);min-height:48px;
+  letter-spacing:0.5px;text-transform:uppercase;transition:all 0.2s;
+}
+.note-cancel-btn:active{background:var(--bg4);}
+
+/* REGIONAL */
+.regional-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+@media(min-width:380px){.regional-grid{grid-template-columns:repeat(5,1fr);}}
+.regional-card{border-color:rgba(187,136,255,0.2);}
+.regional-card.caught{border-color:var(--purple);background:rgba(187,136,255,0.05);}
+.regional-label{font-size:9px;color:var(--purple);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;font-family:var(--font-main);}
+
+/* NOTES */
+.notes-list{display:flex;flex-direction:column;gap:8px;}
+.note-item{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:12px 14px;display:flex;gap:12px;align-items:flex-start;
+  cursor:pointer;border-radius:var(--radius-sm);transition:border-color 0.2s;
+}
+.note-item:active{background:var(--bg3);}
+.note-item:hover{border-color:rgba(0,229,255,0.3);}
+.note-item-img{width:46px;height:46px;image-rendering:pixelated;flex-shrink:0;}
+.note-item-info{flex:1;min-width:0;}
+.note-item-name{color:var(--text);font-size:13px;font-weight:700;margin-bottom:4px;font-family:var(--font-main);letter-spacing:0.5px;text-transform:uppercase;}
+.note-item-text{color:var(--text2);font-family:var(--font-main);font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.4;}
+.note-item-del{color:var(--red);font-size:18px;cursor:pointer;padding:4px 6px;flex-shrink:0;opacity:0.7;transition:opacity 0.2s;}
+.note-item-del:active{opacity:1;}
+.empty-msg{color:var(--text3);font-size:14px;text-align:center;padding:40px 20px;line-height:3;font-family:var(--font-main);}
+
+/* EXPORT */
+.section-title{color:var(--text2);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:14px;font-family:var(--font-main);}
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.export-card{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:14px;border-radius:var(--radius-sm);text-align:center;
+}
+.export-num{font-family:var(--font-main);font-size:32px;font-weight:700;color:var(--red);}
+.export-label{color:var(--text3);font-size:10px;font-weight:700;margin-top:4px;letter-spacing:1px;text-transform:uppercase;}
+.export-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.export-btn{
+  background:var(--bg2);border:1px solid var(--border);color:var(--text2);
+  font-family:var(--font-main);font-size:12px;font-weight:700;
+  padding:14px 6px;cursor:pointer;border-radius:var(--radius-sm);
+  text-align:center;min-height:48px;transition:all 0.2s;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.export-btn:active{background:var(--bg3);color:var(--text);}
+.import-area{background:var(--bg2);border:1px solid var(--border);padding:14px;border-radius:var(--radius-sm);}
+.import-label{color:var(--text3);font-size:11px;font-weight:700;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;}
+.import-textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-family:var(--font-main);font-size:13px;
+  padding:10px;outline:none;resize:none;height:70px;border-radius:var(--radius-sm);
+}
+.import-btn{
+  width:100%;background:var(--bg3);border:1px solid var(--border-red);
+  color:var(--red);font-family:var(--font-main);font-size:12px;font-weight:700;
+  padding:14px;cursor:pointer;border-radius:var(--radius-sm);margin-top:8px;
+  min-height:48px;text-transform:uppercase;letter-spacing:0.5px;transition:all 0.2s;
+}
+.import-btn:active{background:var(--red-dim);}
+.export-msg{color:var(--green);font-size:12px;text-align:center;margin-top:8px;min-height:16px;font-weight:600;}
+
+/* FAB ROW */
+.fab-row{display:flex;gap:8px;margin-bottom:12px;}
+.fab-btn{
+  flex:1;background:var(--bg2);border:1px solid var(--border-red);
+  color:var(--red);font-family:var(--font-main);font-size:12px;font-weight:700;
+  padding:12px;cursor:pointer;border-radius:var(--radius-sm);
+  text-align:center;min-height:44px;text-transform:uppercase;letter-spacing:0.5px;
+  transition:all 0.2s;
+}
+.fab-btn:active{background:var(--red-dim);}
+.fab-btn.fab-reset{border-color:var(--border);color:var(--text2);}
+.fab-btn.fab-reset:active{background:var(--bg3);}
+
+/* LOADING */
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px;gap:14px;}
+.loading-text{color:var(--red);font-family:var(--font-pixel);font-size:8px;animation:blink 1s step-end infinite;letter-spacing:1px;}
+.lb-wrap{width:220px;height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.lb{height:100%;background:var(--red);width:0%;transition:width 0.4s;border-radius:2px;box-shadow:0 0 8px var(--red);}
+.loading-sub{color:var(--text3);font-size:11px;font-weight:600;font-family:var(--font-main);}
+
+@keyframes blink{50%{opacity:0;}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.poke-card{animation:fadeIn 0.2s ease both;}
+</style>
+</head>
+<body>
+<div class="pw">
+  <div class="dh">
+    <div class="dex-logo">
+      <div class="logo-circle"></div>
+      <div class="logo-dots">
+        <div class="ldot ldot-r"></div>
+        <div class="ldot ldot-y"></div>
+        <div class="ldot ldot-g"></div>
+      </div>
+    </div>
+    <div class="dh-title">POKÉDEX <span>NACIONAL</span></div>
+  </div>
+
+  <div class="db">
+    <!-- Desktop sidebar tabs (hidden on mobile) -->
+    <div class="desktop-tabs" style="display:none">
+      <button class="desktop-tab active" onclick="setMode('normal')"><span class="dtab-ico">◉</span>Normal</button>
+      <button class="desktop-tab shiny-dt" onclick="setMode('shiny')"><span class="dtab-ico">★</span>Shiny</button>
+      <button class="desktop-tab regional-dt" onclick="setMode('regional')"><span class="dtab-ico">◈</span>Regional</button>
+      <button class="desktop-tab notes-dt" onclick="setMode('notes')"><span class="dtab-ico">✎</span>Notas</button>
+      <button class="desktop-tab export-dt" onclick="setMode('export')"><span class="dtab-ico">⬡</span>Datos</button>
+    </div>
+    <!-- NOTE MODAL -->
+    <div id="note-modal" class="note-modal">
+      <div class="note-modal-inner">
+        <div class="note-modal-title" id="note-modal-title">Nota</div>
+        <textarea class="note-textarea" id="note-textarea" placeholder="Ej: Lo conseguí en Safari Zone lvl 28, con Master Ball..."></textarea>
+        <div class="note-modal-btns">
+          <button class="note-save-btn" onclick="saveNote()">Guardar</button>
+          <button class="note-cancel-btn" onclick="closeNoteModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRAWER (mobile: bottom sheet, desktop: inside main-content-area) -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+    <div class="detail-drawer" id="detail-drawer">
+    <div class="drawer-handle"></div>
+    <div style="display:none" id="drawer-close-btn" onclick="forceCloseDrawer()" style="position:absolute;top:14px;right:16px;cursor:pointer;color:var(--text3);font-size:20px;z-index:1">✕</div>
+    <div class="drawer-inner" id="drawer-inner"></div>
+    </div>
+  </div><!-- end .db -->
+
+  <!-- MAIN CONTENT AREA (desktop: right column, mobile: not used as wrapper) -->
+  <div class="main-content-area" id="main-content-area">
+    <div id="main-view">
+      <div class="search-bar">
+        <input class="search-box" id="search" placeholder="Buscar Pokémon..." type="text"/>
+        <select class="type-select" id="type-filter">
+          <option value="">Tipo</option>
+          <option value="fire">Fuego</option><option value="water">Agua</option>
+          <option value="grass">Planta</option><option value="electric">Elec</option>
+          <option value="psychic">Psíq</option><option value="normal">Normal</option>
+          <option value="fighting">Lucha</option><option value="flying">Vuelo</option>
+          <option value="poison">Ven</option><option value="ground">Tierra</option>
+          <option value="rock">Roca</option><option value="bug">Bicho</option>
+          <option value="ghost">Fant</option><option value="dragon">Drag</option>
+          <option value="dark">Sin</option><option value="steel">Acero</option>
+          <option value="ice">Hielo</option><option value="fairy">Hada</option>
+        </select>
+      </div>
+      <div class="gen-scroll">
+        <button class="gen-btn active" onclick="setGen(0)">Todos</button>
+        <button class="gen-btn" onclick="setGen(1)">Gen I</button>
+        <button class="gen-btn" onclick="setGen(2)">Gen II</button>
+        <button class="gen-btn" onclick="setGen(3)">Gen III</button>
+        <button class="gen-btn" onclick="setGen(4)">Gen IV</button>
+        <button class="gen-btn" onclick="setGen(5)">Gen V</button>
+        <button class="gen-btn" onclick="setGen(6)">Gen VI</button>
+        <button class="gen-btn" onclick="setGen(7)">Gen VII</button>
+        <button class="gen-btn" onclick="setGen(8)">Gen VIII</button>
+        <button class="gen-btn" onclick="setGen(9)">Gen IX</button>
+      </div>
+      <div class="filter-pills">
+        <button class="pill active" onclick="setFilter('all')">Todos</button>
+        <button class="pill" onclick="setFilter('caught')">Capturados</button>
+        <button class="pill" onclick="setFilter('missing')">Faltantes</button>
+        <button class="pill" onclick="setFilter('noted')">Con nota ✎</button>
+      </div>
+      <div class="stats-bar">
+        <span class="s-red" id="caught-count">Cap: 0</span>
+        <span id="total-count">Tot: 0</span>
+        <span id="percent">0%</span>
+        <span class="s-gold" id="shiny-count">★ 0</span>
+      </div>
+      <div class="pokemon-grid" id="pokemon-grid">
+        <div style="grid-column:1/-1">
+          <div class="loading-screen" id="loader">
+            <div class="loading-text">CARGANDO</div>
+            <div class="lb-wrap"><div class="lb" id="load-bar"></div></div>
+            <div class="loading-sub">Conectando con Pokémon API...</div>
+          </div>
+        </div>
+      </div>
+      <div class="pagination" id="pagination" style="display:none">
+        <button class="page-btn" onclick="prevPage()">← PREV</button>
+        <div class="page-info" id="page-info"></div>
+        <button class="page-btn" onclick="nextPage()">NEXT →</button>
+      </div>
+      <div class="fab-row">
+        <button class="fab-btn" onclick="catchAll()">✦ Marcar todos</button>
+        <button class="fab-btn fab-reset" onclick="resetAll()">✕ Resetear</button>
+      </div>
+    </div>
+
+    <!-- REGIONAL VIEW -->
+    <div id="regional-view" style="display:none">
+      <div class="section-title">◈ Formas Regionales</div>
+      <div class="filter-pills" id="reg-pills">
+        <button class="pill active" onclick="setRegFilter('all')">Todos</button>
+        <button class="pill" onclick="setRegFilter('alolan')" style="border-color:rgba(255,136,0,0.4);color:#FF8800">Alola</button>
+        <button class="pill" onclick="setRegFilter('galarian')" style="border-color:rgba(136,85,255,0.4);color:#8855FF">Galar</button>
+        <button class="pill" onclick="setRegFilter('hisuian')" style="border-color:rgba(204,34,34,0.4);color:#CC2222">Hisui</button>
+        <button class="pill" onclick="setRegFilter('paldean')" style="border-color:rgba(34,85,204,0.4);color:#2255CC">Paldea</button>
+        <button class="pill" onclick="setRegFilter('caught')">Capturados</button>
+        <button class="pill" onclick="setRegFilter('missing')">Faltantes</button>
+      </div>
+      <div class="stats-bar">
+        <span class="s-red" id="reg-caught">Cap: 0</span>
+        <span id="reg-total">Tot: 0</span>
+        <span id="reg-percent">0%</span>
+        <span class="s-gold" id="reg-shiny">★ 0</span>
+      </div>
+      <div class="regional-grid" id="regional-grid"></div>
+      <div class="fab-row" style="margin-top:12px">
+        <button class="fab-btn" onclick="catchAllRegional()">✦ Marcar todos</button>
+        <button class="fab-btn fab-reset" onclick="resetRegional()">✕ Resetear</button>
+      </div>
+    </div>
+
+    <!-- NOTES VIEW -->
+    <div id="notes-view" style="display:none">
+      <div class="section-title">✎ Mis Notas</div>
+      <input class="search-box" id="notes-search" placeholder="Buscar en notas..." style="width:100%;margin-bottom:12px;" oninput="renderNotesList()"/>
+      <div class="notes-list" id="notes-list"></div>
+    </div>
+
+    <!-- EXPORT VIEW -->
+    <div id="export-view" style="display:none">
+      <div class="section-title">⬡ Gestión de Datos</div>
+      <div class="export-grid">
+        <div class="export-card"><div class="export-num" id="exp-normal">0</div><div class="export-label">Capturados</div></div>
+        <div class="export-card"><div class="export-num" id="exp-shiny" style="color:var(--gold)">0</div><div class="export-label">★ Shiny</div></div>
+        <div class="export-card"><div class="export-num" id="exp-regional" style="color:var(--purple)">0</div><div class="export-label">◈ Regionales</div></div>
+        <div class="export-card"><div class="export-num" id="exp-notes" style="color:var(--cyan)">0</div><div class="export-label">✎ Notas</div></div>
+      </div>
+      <div class="export-btns">
+        <button class="export-btn" onclick="exportJSON()">⬇ JSON</button>
+        <button class="export-btn" onclick="exportCSV()">⬇ CSV</button>
+        <button class="export-btn" onclick="exportText()">⬇ TXT</button>
+        <button class="export-btn" onclick="copyToClipboard()">⎘ Copiar</button>
+      </div>
+      <div class="import-area">
+        <div class="import-label">⬆ Importar (pegar JSON)</div>
+        <textarea class="import-textarea" id="import-textarea" placeholder='{"caught":{},...}'></textarea>
+        <button class="import-btn" onclick="importData()">Importar y Restaurar</button>
+      </div>
+      <div class="export-msg" id="export-msg"></div>
+    </div>
+
+    <!-- Drawer inside content area for desktop -->
+    <div class="detail-drawer-desktop" id="detail-drawer-desktop" style="display:none"></div>
+  </div><!-- end .main-content-area -->
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="setMode('normal')"><span class="nav-ico">◉</span>Normal</button>
+    <button class="nav-btn shiny-nav" onclick="setMode('shiny')"><span class="nav-ico">★</span>Shiny</button>
+    <button class="nav-btn regional-nav" onclick="setMode('regional')"><span class="nav-ico">◈</span>Regional</button>
+    <button class="nav-btn notes-nav" onclick="setMode('notes')"><span class="nav-ico">✎</span>Notas</button>
+    <button class="nav-btn export-nav" onclick="setMode('export')"><span class="nav-ico">⬡</span>Datos</button>
+  </nav>
+</div>
+
+<script>
+const GEN_RANGES=[null,{s:1,e:151,n:'Kanto'},{s:152,e:251,n:'Johto'},{s:252,e:386,n:'Hoenn'},{s:387,e:493,n:'Sinnoh'},{s:494,e:649,n:'Unova'},{s:650,e:721,n:'Kalos'},{s:722,e:809,n:'Alola'},{s:810,e:905,n:'Galar'},{s:906,e:1025,n:'Paldea'}];
+const TC={fire:{bg:'#FF6B35',t:'#fff'},water:{bg:'#4A90D9',t:'#fff'},grass:{bg:'#5DB85D',t:'#fff'},electric:{bg:'#F0C040',t:'#333'},psychic:{bg:'#D85888',t:'#fff'},normal:{bg:'#A8A878',t:'#fff'},fighting:{bg:'#C03028',t:'#fff'},flying:{bg:'#A890F0',t:'#fff'},poison:{bg:'#A040A0',t:'#fff'},ground:{bg:'#E0C068',t:'#333'},rock:{bg:'#B8A038',t:'#fff'},bug:{bg:'#A8B820',t:'#fff'},ghost:{bg:'#705898',t:'#fff'},dragon:{bg:'#7038F8',t:'#fff'},dark:{bg:'#705848',t:'#fff'},steel:{bg:'#B8B8D0',t:'#333'},ice:{bg:'#98D8D8',t:'#333'},fairy:{bg:'#EE99AC',t:'#fff'}};
+const SN={hp:'HP',attack:'ATK',defense:'DEF','special-attack':'SpA','special-defense':'SpD',speed:'VEL'};
+const STAT_COLORS=['#E8192C','#FF6B35','#F0C040','#5DB85D','#4A90D9','#A890F0'];
+
+const REGIONAL_FORMS=[
+  {key:'alolan-rattata',name:'Rattata',region:'alolan',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10091.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10091.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10091.png',url:'https://pokeapi.co/api/v2/pokemon/rattata-alola'},
+  {key:'alolan-raticate',name:'Raticate',region:'alolan',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10092.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10092.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10092.png',url:'https://pokeapi.co/api/v2/pokemon/raticate-alola'},
+  {key:'alolan-raichu',name:'Raichu',region:'alolan',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10100.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10100.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10100.png',url:'https://pokeapi.co/api/v2/pokemon/raichu-alola'},
+  {key:'alolan-vulpix',name:'Vulpix',region:'alolan',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10103.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10103.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10103.png',url:'https://pokeapi.co/api/v2/pokemon/vulpix-alola'},
+  {key:'alolan-ninetales',name:'Ninetales',region:'alolan',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10104.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10104.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10104.png',url:'https://pokeapi.co/api/v2/pokemon/ninetales-alola'},
+  {key:'alolan-exeggutor',name:'Exeggutor',region:'alolan',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10114.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10114.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10114.png',url:'https://pokeapi.co/api/v2/pokemon/exeggutor-alola'},
+  {key:'alolan-marowak',name:'Marowak',region:'alolan',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10115.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10115.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10115.png',url:'https://pokeapi.co/api/v2/pokemon/marowak-alola'},
+  {key:'galarian-ponyta',name:'Ponyta',region:'galarian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10162.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10162.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10162.png',url:'https://pokeapi.co/api/v2/pokemon/ponyta-galar'},
+  {key:'galarian-rapidash',name:'Rapidash',region:'galarian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10163.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10163.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10163.png',url:'https://pokeapi.co/api/v2/pokemon/rapidash-galar'},
+  {key:'galarian-slowpoke',name:'Slowpoke',region:'galarian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10164.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10164.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10164.png',url:'https://pokeapi.co/api/v2/pokemon/slowpoke-galar'},
+  {key:'galarian-weezing',name:'Weezing',region:'galarian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10167.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10167.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10167.png',url:'https://pokeapi.co/api/v2/pokemon/weezing-galar'},
+  {key:'galarian-corsola',name:'Corsola',region:'galarian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10169.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10169.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10169.png',url:'https://pokeapi.co/api/v2/pokemon/corsola-galar'},
+  {key:'hisuian-growlithe',name:'Growlithe',region:'hisuian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10229.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10229.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10229.png',url:'https://pokeapi.co/api/v2/pokemon/growlithe-hisui'},
+  {key:'hisuian-typhlosion',name:'Typhlosion',region:'hisuian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10233.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10233.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10233.png',url:'https://pokeapi.co/api/v2/pokemon/typhlosion-hisui'},
+  {key:'hisuian-zorua',name:'Zorua',region:'hisuian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10240.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10240.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10240.png',url:'https://pokeapi.co/api/v2/pokemon/zorua-hisui'},
+  {key:'hisuian-zoroark',name:'Zoroark',region:'hisuian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10241.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10241.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10241.png',url:'https://pokeapi.co/api/v2/pokemon/zoroark-hisui'},
+  {key:'hisuian-decidueye',name:'Decidueye',region:'hisuian',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10246.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10246.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10246.png',url:'https://pokeapi.co/api/v2/pokemon/decidueye-hisui'},
+  {key:'paldean-tauros-combat',name:'Tauros (C)',region:'paldean',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10250.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10250.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10250.png',url:'https://pokeapi.co/api/v2/pokemon/tauros-paldea-combat-breed'},
+  {key:'paldean-wooper',name:'Wooper',region:'paldean',sprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10253.png',artwork:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10253.png',shinySprite:'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/10253.png',url:'https://pokeapi.co/api/v2/pokemon/wooper-paldea'},
+];
+const REGION_LABELS={alolan:'Alolan',galarian:'Galarian',hisuian:'Hisuian',paldean:'Paldean'};
+const RC={alolan:'#FF8800',galarian:'#8855FF',hisuian:'#CC2222',paldean:'#2255CC'};
+
+function ld(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')||d;}catch(e){return d;}}
+function saveAll(){try{localStorage.setItem('pdx_caught',JSON.stringify(caught));localStorage.setItem('pdx_shiny',JSON.stringify(shiny));localStorage.setItem('pdx_notes',JSON.stringify(notes));localStorage.setItem('pdx_regional',JSON.stringify(caughtRegional));localStorage.setItem('pdx_shiny_regional',JSON.stringify(shinyRegional));}catch(e){}}
+
+let allPokemon=[],filteredPokemon=[],filteredRegional=REGIONAL_FORMS;
+let caught=ld('pdx_caught',{}),shiny=ld('pdx_shiny',{}),notes=ld('pdx_notes',{});
+let caughtRegional=ld('pdx_regional',{}),shinyRegional=ld('pdx_shiny_regional',{});
+let currentPage=0,PAGE_SIZE=30,currentGen=0,currentFilter='all',currentMode='normal',currentRegFilter='all';
+let selectedPoke=null,selectedRegional=null,noteTarget=null,isLoaded=false;
+let cache={},regCache={},abilityCache={},speciesCache={},evoCache={};
+
+async function loadPokedex(){
+  try{
+    const r=await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
+    const d=await r.json();
+    document.getElementById('load-bar').style.width='80%';
+    allPokemon=d.results.map((p,i)=>{
+      const id=i+1;let gen=1;
+      for(let g=1;g<=9;g++){if(id>=GEN_RANGES[g].s&&id<=GEN_RANGES[g].e){gen=g;break;}}
+      return{id,name:p.name,url:p.url,types:[],gen};
+    });
+    document.getElementById('load-bar').style.width='100%';
+    setTimeout(()=>{
+      document.getElementById('loader').style.display='none';
+      document.getElementById('pagination').style.display='flex';
+      isLoaded=true;applyFilters();renderGrid();updateStats();
+      initDesktopLayout();
+    },400);
+  }catch(e){document.getElementById('loader').innerHTML='<div class="loading-text">ERROR</div><div class="loading-sub">Verificá tu conexión a internet</div>';}
+}
+
+async function getPD(id,url){if(cache[id])return cache[id];const r=await fetch(url);const d=await r.json();cache[id]=d;if(allPokemon[id-1])allPokemon[id-1].types=d.types.map(t=>t.type.name);return d;}
+async function getAbDesc(url){if(abilityCache[url])return abilityCache[url];try{const r=await fetch(url);const d=await r.json();const e=d.flavor_text_entries.find(e=>e.language.name==='es')||d.flavor_text_entries.find(e=>e.language.name==='en')||{flavor_text:'Sin descripción.'};const t=e.flavor_text.replace(/[\n\f]/g,' ');abilityCache[url]=t;return t;}catch(e){return 'Sin descripción disponible.';}}
+async function getSpecies(id){if(speciesCache[id])return speciesCache[id];try{const r=await fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}/`);const d=await r.json();speciesCache[id]=d;return d;}catch(e){return null;}}
+async function getEvo(url){if(evoCache[url])return evoCache[url];try{const r=await fetch(url);const d=await r.json();evoCache[url]=d;return d;}catch(e){return null;}}
+function flatChain(chain){const items=[];function w(n){const id=n.species.url.split('/').filter(Boolean).pop();items.push({name:n.species.name,id:parseInt(id)});n.evolves_to.forEach(w);}w(chain);return items;}
+
+const isDesktop=()=>window.innerWidth>=1100;
+
+function setMode(m){
+  currentMode=m;
+  // Mobile bottom nav
+  ['normal','shiny','regional','notes','export'].forEach((x,i)=>document.querySelectorAll('.nav-btn')[i].classList.toggle('active',x===m));
+  // Desktop sidebar tabs
+  const dtabs=document.querySelectorAll('.desktop-tab');
+  ['normal','shiny','regional','notes','export'].forEach((x,i)=>{if(dtabs[i])dtabs[i].classList.toggle('active',x===m);});
+
+  document.getElementById('main-view').style.display=(m==='normal'||m==='shiny')?'block':'none';
+  document.getElementById('regional-view').style.display=m==='regional'?'block':'none';
+  document.getElementById('notes-view').style.display=m==='notes'?'block':'none';
+  document.getElementById('export-view').style.display=m==='export'?'block':'none';
+  if(!isDesktop())closeDrawer();
+  if(m==='regional'){applyRegFilter();renderRegionalGrid();updateRegionalStats();}
+  else if(m==='notes'){renderNotesList();}
+  else if(m==='export'){renderExportStats();}
+  else{applyFilters();renderGrid();updateStats();}
+}
+
+function initDesktopLayout(){
+  if(!isDesktop())return;
+  // Show desktop tabs
+  const dt=document.querySelector('.desktop-tabs');
+  if(dt)dt.style.display='flex';
+  // Move drawer into main-content-area so it appears in the right column
+  const mca=document.getElementById('main-content-area');
+  const drawer=document.getElementById('detail-drawer');
+  if(mca&&drawer&&!mca.contains(drawer)){
+    mca.insertBefore(drawer,mca.firstChild);
+  }
+}
+
+window.addEventListener('resize',()=>{initDesktopLayout();});
+
+function setGen(g){currentGen=g;document.querySelectorAll('.gen-btn').forEach((b,i)=>b.classList.toggle('active',i===g));currentPage=0;applyFilters();renderGrid();updateStats();}
+function setFilter(f){currentFilter=f;document.querySelectorAll('.filter-pills .pill').forEach((b,i)=>b.classList.toggle('active',['all','caught','missing','noted'][i]===f));currentPage=0;applyFilters();renderGrid();}
+
+function applyFilters(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  const tp=document.getElementById('type-filter').value;
+  filteredPokemon=allPokemon.filter(p=>{
+    if(currentGen>0&&p.gen!==currentGen)return false;
+    if(q&&!p.name.includes(q)&&!String(p.id).includes(q))return false;
+    if(tp&&p.types.length>0&&!p.types.includes(tp))return false;
+    if(currentFilter==='caught'&&!caught[p.id])return false;
+    if(currentFilter==='missing'&&caught[p.id])return false;
+    if(currentFilter==='noted'&&!notes[p.id])return false;
+    return true;
+  });
+}
+
+function renderGrid(){
+  if(!isLoaded)return;
+  const grid=document.getElementById('pokemon-grid');
+  const page=filteredPokemon.slice(currentPage*PAGE_SIZE,(currentPage+1)*PAGE_SIZE);
+  if(!page.length){grid.innerHTML='<div style="grid-column:1/-1;color:var(--text3);font-size:14px;text-align:center;padding:40px;font-family:var(--font-main)">No se encontraron Pokémon</div>';document.getElementById('page-info').textContent='';return;}
+  grid.innerHTML=page.map(p=>{
+    const s=shiny[p.id],n=caught[p.id],hn=!!notes[p.id],sel=selectedPoke&&selectedPoke.id===p.id;
+    const img=s?`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${p.id}.png`:`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`;
+    return `<div class="poke-card${s?' shiny-caught':''}${n&&!s?' caught':''}${sel?' selected':''}${hn?' has-note':''}" onclick="selectPoke(${p.id},'${p.name}','${p.url}')">
+      <div class="caught-mark"></div><div class="shiny-badge">★</div>
+      <div class="poke-num">#${String(p.id).padStart(4,'0')}</div>
+      <img class="poke-img" src="${img}" loading="lazy" onerror="this.style.visibility='hidden'"/>
+      <div class="poke-name">${p.name.replace(/-/g,' ')}</div>
+    </div>`;
+  }).join('');
+  const total=filteredPokemon.length,pages=Math.ceil(total/PAGE_SIZE);
+  document.getElementById('page-info').textContent=`${currentPage+1} / ${pages}`;
+}
+
+async function selectPoke(id,name,url){
+  selectedPoke={id,name,url};renderGrid();openDrawer();
+  const nArt=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+  const sArt=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`;
+  const sSprite=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`;
+  const gen=allPokemon[id-1]?GEN_RANGES[allPokemon[id-1].gen].n:'';
+  document.getElementById('drawer-inner').innerHTML=`
+    <div class="drawer-header">
+      <div class="drawer-name">${name.replace(/-/g,' ')}</div>
+      <div class="drawer-num">#${String(id).padStart(4,'0')} · ${gen}</div>
+    </div>
+    <div class="drawer-imgs">
+      <div class="drawer-img-box"><div class="drawer-img-lbl">Normal</div><img class="drawer-art" src="${nArt}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png'"/></div>
+      <div class="drawer-img-box"><div class="drawer-img-lbl shiny-lbl">★ Shiny</div><img class="drawer-art" src="${sArt}" onerror="this.src='${sSprite}'"/></div>
+    </div>
+    <div class="catch-row" id="dcr">${buildCR(id)}</div>
+    <div class="type-badges" id="dtypes"><span style="color:var(--text3);font-size:12px">Cargando tipos...</span></div>
+    <div class="poke-desc" id="dpokdesc"><div class="poke-desc-loading">Cargando descripción...</div></div>
+    <div class="drawer-tabs">
+      <button class="dtab active" id="dt-stats" onclick="swTab('stats')">Stats</button>
+      <button class="dtab" id="dt-abilities" onclick="swTab('abilities')">Habilidades</button>
+      <button class="dtab" id="dt-info" onclick="swTab('info')">Info</button>
+      <button class="dtab" id="dt-forms" onclick="swTab('forms')">Formas</button>
+    </div>
+    <div class="drawer-section visible" id="ds-stats"><div id="dstats"><div class="ability-loading">Cargando...</div></div></div>
+    <div class="drawer-section" id="ds-abilities"><div class="ability-list" id="dabilities"><div class="ability-loading">Cargando habilidades...</div></div></div>
+    <div class="drawer-section" id="ds-info"><div id="dinfo"><div class="ability-loading">Cargando info...</div></div></div>
+    <div class="drawer-section" id="ds-forms"><div id="dforms"><div class="ability-loading">Cargando formas...</div></div></div>
+    ${notes[id]?`<div class="note-preview" id="dnp">✎ ${notes[id]}</div>`:'<div id="dnp"></div>'}`;
+
+  try{
+    const data=await getPD(id,url);
+    const typeNames=data.types.map(t=>typeof t==='string'?t:t.type.name);
+    document.getElementById('dtypes').innerHTML=typeNames.map(t=>{const c=TC[t]||{bg:'#666',t:'#fff'};return `<span class="type-badge" style="background:${c.bg};color:${c.t}">${t}</span>`;}).join('');
+    const stats=data.stats.slice(0,6);
+    const tot=stats.reduce((s,x)=>s+x.base_stat,0);
+    document.getElementById('dstats').innerHTML=stats.map((s,i)=>{
+      const l=SN[s.stat.name]||s.stat.name.substring(0,3).toUpperCase();
+      const p=Math.min(100,Math.round(s.base_stat/255*100));
+      const color=s.base_stat>=100?'#FFD700':s.base_stat>=70?'#00ff88':'#E8192C';
+      return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${p}%;background:${color}"></div></div><div class="stat-val">${s.base_stat}</div></div>`;
+    }).join('')+`<div class="stat-total">TOTAL: ${tot}</div>`;
+
+    document.getElementById('dabilities').innerHTML=data.abilities.map(a=>`
+      <div class="ability-card${a.is_hidden?' hidden-ability':''}">
+        <div class="ability-header"><div class="ability-name">${a.ability.name.replace(/-/g,' ')}</div>${a.is_hidden?'<span class="ability-hidden-tag">Oculta</span>':''}</div>
+        <div class="ability-desc" id="ab_${a.ability.name.replace(/-/g,'_')}">Cargando...</div>
+      </div>`).join('');
+    data.abilities.forEach(async a=>{const k='ab_'+a.ability.name.replace(/-/g,'_');const desc=await getAbDesc(a.ability.url);const el=document.getElementById(k);if(el)el.textContent=desc;});
+
+    document.getElementById('dinfo').innerHTML=`
+      <div class="info-grid">
+        <div class="info-card"><div class="info-label">Peso</div><div class="info-val">${data.weight/10} kg</div></div>
+        <div class="info-card"><div class="info-label">Altura</div><div class="info-val">${data.height/10} m</div></div>
+        <div class="info-card"><div class="info-label">Exp Base</div><div class="info-val">${data.base_experience||'?'}</div></div>
+        <div class="info-card"><div class="info-label">Amistad</div><div class="info-val" id="dbf">...</div></div>
+      </div>
+      <div class="evolutions-wrap" id="devo"><div class="evo-label">Evoluciones</div><div class="ability-loading">Cargando...</div></div>`;
+
+    const sp=await getSpecies(id);
+    if(sp){
+      // Descripción Pokédex
+      const descEntry=sp.flavor_text_entries.find(e=>e.language.name==='es')||sp.flavor_text_entries.find(e=>e.language.name==='en');
+      const genus=sp.genera?.find(g=>g.language.name==='es')?.genus||sp.genera?.find(g=>g.language.name==='en')?.genus||'';
+      const descEl=document.getElementById('dpokdesc');
+      if(descEl) descEl.innerHTML=(genus?`<div class="poke-genus">${genus}</div>`:'')+
+        (descEntry?`<div class="poke-desc-text">${descEntry.flavor_text.replace(/[\n\f]/g,' ')}</div>`:'');
+
+      const bfEl=document.getElementById('dbf');if(bfEl)bfEl.textContent=sp.base_happiness!==undefined?sp.base_happiness:'?';
+      if(sp.evolution_chain){const ed=await getEvo(sp.evolution_chain.url);if(ed){const ch=flatChain(ed.chain),devo=document.getElementById('devo');
+        if(devo)devo.innerHTML='<div class="evo-label">Evoluciones</div><div class="evo-chain">'+ch.map((e,i)=>`${i>0?'<div class="evo-arrow">→</div>':''}<div class="evo-item" onclick="goById(${e.id})"><img class="evo-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${e.id}.png" onerror="this.style.display='none'"/><div class="evo-name">${e.name.replace(/-/g,' ')}</div></div>`).join('')+'</div>';}}
+
+      // Cargar formas (variedades y regionales)
+      await loadPokemonForms(id, sp);
+    }
+    applyFilters();renderGrid();
+  }catch(err){}
+}
+
+function swTab(t){['stats','abilities','info','forms'].forEach(x=>{document.getElementById('dt-'+x).classList.toggle('active',x===t);document.getElementById('ds-'+x).classList.toggle('visible',x===t);});}
+function goById(id){const p=allPokemon[id-1];if(p)selectPoke(id,p.name,p.url);}
+
+const REGION_NAME_MAP={alola:'Alolan',galar:'Galarian',hisui:'Hisuian',paldea:'Paldean'};
+const REGION_COLOR_MAP={alola:'#FF8800',galar:'#8855FF',hisui:'#CC2222',paldea:'#2255CC'};
+
+async function loadPokemonForms(baseId, sp){
+  const dforms=document.getElementById('dforms');
+  if(!dforms)return;
+  try{
+    // Get all varieties from species
+    const varieties=sp.varieties||[];
+    const nonDefault=varieties.filter(v=>!v.is_default);
+
+    if(!nonDefault.length){
+      dforms.innerHTML='<div class="no-forms">Este Pokémon no tiene formas alternativas.</div>';
+      return;
+    }
+
+    // Render loading placeholders
+    dforms.innerHTML='<div class="forms-title">FORMAS ALTERNATIVAS</div><div class="forms-grid" id="forms-grid-inner"></div>';
+    const grid=document.getElementById('forms-grid-inner');
+    if(!grid)return;
+
+    for(const variety of nonDefault){
+      const vName=variety.pokemon.name;
+      const vUrl=variety.pokemon.url;
+
+      // Parse region from name
+      let region=null,regionLabel=null,regionColor='#888';
+      for(const [key,label] of Object.entries(REGION_NAME_MAP)){
+        if(vName.includes(key)){region=key;regionLabel=label;regionColor=REGION_COLOR_MAP[key];break;}
+      }
+
+      // Create card placeholder
+      const cardId='fcard-'+vName.replace(/-/g,'_');
+      const card=document.createElement('div');
+      card.className='form-card'+(region?' regional-form':'');
+      card.id=cardId;
+      card.innerHTML=`<div class="form-card-label ${region?'regional-lbl':''}">${regionLabel||'Forma alternativa'}</div>
+        <div class="form-imgs-row">
+          <div class="form-img-box"><div class="form-img-sublbl">Normal</div><div style="width:70px;height:70px;background:var(--bg4);border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="color:var(--text3);font-size:10px">...</span></div></div>
+          <div class="form-img-box"><div class="form-img-sublbl s-lbl">★ Shiny</div><div style="width:70px;height:70px;background:var(--bg4);border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="color:var(--text3);font-size:10px">...</span></div></div>
+        </div>
+        <div class="form-types" id="ftypes-${cardId}"></div>
+        ${region?`<div style="margin-top:6px"><span class="form-region-tag" style="background:${regionColor}22;color:${regionColor};border:1px solid ${regionColor}44">${regionLabel}</span></div>`:''}`;
+      grid.appendChild(card);
+
+      // Fetch variety data async
+      fetch(vUrl).then(r=>r.json()).then(vData=>{
+        const normId=vData.id;
+        const nArt=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${normId}.png`;
+        const sArt=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${normId}.png`;
+        const nSprite=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${normId}.png`;
+        const sSprite=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${normId}.png`;
+        const types=vData.types.map(t=>t.type.name);
+        const nameDisplay=vName.replace(/-/g,' ').replace(baseId===vData.id?'':'',' ');
+        const c=document.getElementById(cardId);
+        if(!c)return;
+        c.innerHTML=`
+          <div class="form-card-label ${region?'regional-lbl':''}">${nameDisplay}</div>
+          <div class="form-imgs-row">
+            <div class="form-img-box">
+              <div class="form-img-sublbl">Normal</div>
+              <img class="form-art" src="${nArt}" onerror="this.src='${nSprite}'" loading="lazy"/>
+            </div>
+            <div class="form-img-box">
+              <div class="form-img-sublbl s-lbl">★ Shiny</div>
+              <img class="form-art" src="${sArt}" onerror="this.src='${sSprite}'" loading="lazy"/>
+            </div>
+          </div>
+          <div class="form-types">${types.map(t=>{const c=TC[t]||{bg:'#666',t:'#fff'};return `<span class="form-type-badge" style="background:${c.bg};color:${c.t}">${t}</span>`;}).join('')}</div>
+          ${region?`<div style="margin-top:6px"><span class="form-region-tag" style="background:${regionColor}22;color:${regionColor};border:1px solid ${regionColor}44">${regionLabel}</span></div>`:''}`;
+      }).catch(()=>{});
+    }
+  }catch(e){
+    if(dforms)dforms.innerHTML='<div class="no-forms">Error al cargar formas.</div>';
+  }
+}
+
+function buildCR(id){return `<button class="catch-btn${caught[id]?' caught-btn':''}" onclick="tC('normal')">${caught[id]?'✓ Capturado':'◉ Capturar'}</button><button class="catch-btn shiny-catch-btn${shiny[id]?' caught-btn':''}" onclick="tC('shiny')">${shiny[id]?'★ Shiny':'☆ Shiny'}</button><button class="catch-btn note-btn" onclick="openNM(${id},'${allPokemon[id-1]?.name||''}')">✎</button>`;}
+
+function tC(type){if(!selectedPoke)return;const id=selectedPoke.id;if(type==='normal'){caught[id]?delete caught[id]:caught[id]=true;}else{shiny[id]?delete shiny[id]:shiny[id]=true;}saveAll();updateStats();applyFilters();renderGrid();const r=document.getElementById('dcr');if(r)r.innerHTML=buildCR(id);}
+function forceCloseDrawer(){
+  document.getElementById('detail-drawer').classList.remove('open');
+  selectedPoke=null;selectedRegional=null;renderGrid();
+}
+function openDrawer(){
+  const drawer=document.getElementById('detail-drawer');
+  drawer.classList.add('open');
+  if(!isDesktop()){
+    document.getElementById('drawer-overlay').classList.add('open');
+  } else {
+    // Scroll drawer into view on desktop
+    setTimeout(()=>drawer.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+  }
+}
+function closeDrawer(){
+  if(isDesktop())return; // On desktop, drawer stays visible until another is selected
+  const drawer=document.getElementById('detail-drawer');
+  drawer.classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  selectedPoke=null;selectedRegional=null;renderGrid();
+}
+function updateStats(){const pool=currentGen>0?allPokemon.filter(p=>p.gen===currentGen):allPokemon;const c=pool.filter(p=>caught[p.id]).length,s=pool.filter(p=>shiny[p.id]).length,total=pool.length;document.getElementById('caught-count').textContent=`Cap: ${c}`;document.getElementById('total-count').textContent=`Tot: ${total}`;document.getElementById('percent').textContent=total?`${Math.round(c/total*100)}%`:'0%';document.getElementById('shiny-count').textContent=`★ ${s}`;}
+
+function openNM(id,name){noteTarget={id,name};document.getElementById('note-modal-title').textContent=`Nota — ${name.replace(/-/g,' ')}`;document.getElementById('note-textarea').value=notes[id]||'';document.getElementById('note-modal').classList.add('open');}
+function closeNoteModal(){document.getElementById('note-modal').classList.remove('open');noteTarget=null;}
+function saveNote(){if(!noteTarget)return;const v=document.getElementById('note-textarea').value.trim();if(v)notes[noteTarget.id]=v;else delete notes[noteTarget.id];saveAll();closeNoteModal();const np=document.getElementById('dnp');if(np)np.textContent=notes[noteTarget.id]?'✎ '+notes[noteTarget.id]:'';applyFilters();renderGrid();if(currentMode==='notes')renderNotesList();if(currentMode==='export')renderExportStats();}
+function renderNotesList(){const q=document.getElementById('notes-search').value.toLowerCase();const list=document.getElementById('notes-list');const ids=Object.keys(notes).filter(id=>{const p=allPokemon[id-1];return p&&(!q||p.name.includes(q)||notes[id].toLowerCase().includes(q));});if(!ids.length){list.innerHTML='<div class="empty-msg">No hay notas aún.\n\nSeleccioná un Pokémon\ny presioná ✎</div>';return;}list.innerHTML=ids.map(id=>{const p=allPokemon[id-1];if(!p)return '';return `<div class="note-item" onclick="goToNote(${id})"><img class="note-item-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png" onerror="this.style.display='none'"/><div class="note-item-info"><div class="note-item-name">#${String(id).padStart(4,'0')} ${p.name.replace(/-/g,' ')}</div><div class="note-item-text">${notes[id]}</div></div><div class="note-item-del" onclick="event.stopPropagation();delNote(${id})">✕</div></div>`;}).join('');}
+function delNote(id){delete notes[id];saveAll();renderNotesList();if(currentMode==='export')renderExportStats();}
+function goToNote(id){const p=allPokemon[id-1];if(!p)return;setMode('normal');setTimeout(()=>selectPoke(id,p.name,p.url),200);}
+
+function setRegFilter(f){currentRegFilter=f;document.querySelectorAll('#reg-pills .pill').forEach((b,i)=>b.classList.toggle('active',['all','alolan','galarian','hisuian','paldean','caught','missing'][i]===f));applyRegFilter();renderRegionalGrid();updateRegionalStats();}
+function applyRegFilter(){filteredRegional=REGIONAL_FORMS.filter(p=>{if(['alolan','galarian','hisuian','paldean'].includes(currentRegFilter)&&p.region!==currentRegFilter)return false;if(currentRegFilter==='caught'&&!caughtRegional[p.key])return false;if(currentRegFilter==='missing'&&caughtRegional[p.key])return false;return true;});}
+
+function renderRegionalGrid(){
+  const grid=document.getElementById('regional-grid');
+  if(!isLoaded){grid.innerHTML='<div style="grid-column:1/-1;color:var(--text3);text-align:center;padding:30px">Cargando...</div>';return;}
+  if(!filteredRegional.length){grid.innerHTML='<div style="grid-column:1/-1;color:var(--text3);text-align:center;padding:30px">No hay Pokémon</div>';return;}
+  grid.innerHTML=filteredRegional.map(p=>{
+    const cap=caughtRegional[p.key],shin=shinyRegional[p.key],sel=selectedRegional&&selectedRegional.key===p.key;
+    return `<div class="poke-card regional-card${cap?' caught':''}${shin?' shiny-caught':''}${sel?' selected':''}" onclick="selReg('${p.key}')">
+      <div class="caught-mark" style="${cap?`background:${RC[p.region]}`:''}"></div>
+      ${shin?'<div class="shiny-badge">★</div>':''}
+      <div class="poke-num" style="color:${RC[p.region]}">${REGION_LABELS[p.region].substring(0,3).toUpperCase()}</div>
+      <img class="poke-img" src="${cap&&shin?p.shinySprite:p.sprite}" style="${cap?'filter:none':''}" loading="lazy"/>
+      <div class="poke-name regional-label">${p.name.replace(/-/g,' ')}</div>
+    </div>`;
+  }).join('');
+}
+
+async function selReg(key){
+  const p=REGIONAL_FORMS.find(x=>x.key===key);if(!p)return;
+  selectedRegional=p;renderRegionalGrid();openDrawer();
+  document.getElementById('drawer-inner').innerHTML=`
+    <div class="drawer-header">
+      <div class="drawer-name" style="color:var(--purple)">${REGION_LABELS[p.region]} ${p.name}</div>
+      <div class="drawer-num" style="color:${RC[p.region]}">Forma Regional · ${REGION_LABELS[p.region]}</div>
+    </div>
+    <div class="drawer-imgs">
+      <div class="drawer-img-box"><div class="drawer-img-lbl">Normal</div><img class="drawer-art" src="${p.artwork}" onerror="this.src='${p.sprite}'"/></div>
+      <div class="drawer-img-box"><div class="drawer-img-lbl shiny-lbl">★ Shiny</div><img class="drawer-art" src="${p.shinySprite}"/></div>
+    </div>
+    <div class="catch-row" id="dcr">${buildRCR(key)}</div>
+    <div class="type-badges" id="dtypes"><span style="color:var(--text3)">Cargando...</span></div>
+    <div class="drawer-tabs">
+      <button class="dtab active" id="dt-stats" onclick="swTab('stats')">Stats</button>
+      <button class="dtab" id="dt-abilities" onclick="swTab('abilities')">Habilidades</button>
+      <button class="dtab" id="dt-info" onclick="swTab('info')">Info</button>
+    </div>
+    <div class="drawer-section visible" id="ds-stats"><div id="dstats"><div class="ability-loading">Cargando...</div></div></div>
+    <div class="drawer-section" id="ds-abilities"><div class="ability-list" id="dabilities"><div class="ability-loading">Cargando...</div></div></div>
+    <div class="drawer-section" id="ds-info"><div id="dinfo"><div class="ability-loading">Cargando...</div></div></div>`;
+
+  try{
+    if(!regCache[key]){const r=await fetch(p.url);regCache[key]=await r.json();}
+    const data=regCache[key];
+    const typeNamesR=data.types.map(t=>typeof t==='string'?t:t.type.name);
+    document.getElementById('dtypes').innerHTML=typeNamesR.map(t=>{const c=TC[t]||{bg:'#666',t:'#fff'};return `<span class="type-badge" style="background:${c.bg};color:${c.t}">${t}</span>`;}).join('');
+    const tot=data.stats.slice(0,6).reduce((s,x)=>s+x.base_stat,0);
+    document.getElementById('dstats').innerHTML=data.stats.slice(0,6).map(s=>{const l=SN[s.stat.name]||s.stat.name.substring(0,3).toUpperCase(),pct=Math.min(100,Math.round(s.base_stat/255*100));const color=s.base_stat>=100?'#FFD700':s.base_stat>=70?'#00ff88':'#bb88ff';return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%;background:${color}"></div></div><div class="stat-val">${s.base_stat}</div></div>`;}).join('')+`<div class="stat-total">TOTAL: ${tot}</div>`;
+    document.getElementById('dabilities').innerHTML=data.abilities.map(a=>`<div class="ability-card${a.is_hidden?' hidden-ability':''}"><div class="ability-header"><div class="ability-name">${a.ability.name.replace(/-/g,' ')}</div>${a.is_hidden?'<span class="ability-hidden-tag">Oculta</span>':''}</div><div class="ability-desc" id="ab_${a.ability.name.replace(/-/g,'_')}">Cargando...</div></div>`).join('');
+    data.abilities.forEach(async a=>{const k='ab_'+a.ability.name.replace(/-/g,'_');const desc=await getAbDesc(a.ability.url);const el=document.getElementById(k);if(el)el.textContent=desc;});
+    document.getElementById('dinfo').innerHTML=`<div class="info-grid"><div class="info-card"><div class="info-label">Peso</div><div class="info-val">${data.weight/10} kg</div></div><div class="info-card"><div class="info-label">Altura</div><div class="info-val">${data.height/10} m</div></div><div class="info-card"><div class="info-label">Región</div><div class="info-val" style="color:${RC[p.region]}">${REGION_LABELS[p.region]}</div></div><div class="info-card"><div class="info-label">Exp Base</div><div class="info-val">${data.base_experience||'?'}</div></div></div>`;
+  }catch(e){}
+}
+
+function buildRCR(key){return `<button class="catch-btn${caughtRegional[key]?' caught-btn':''}" style="border-color:rgba(187,136,255,0.4);color:var(--purple)" onclick="tRC('${key}','normal')">${caughtRegional[key]?'✓ Capturado':'◉ Capturar'}</button><button class="catch-btn shiny-catch-btn${shinyRegional[key]?' caught-btn':''}" onclick="tRC('${key}','shiny')">${shinyRegional[key]?'★ Shiny':'☆ Shiny'}</button>`;}
+function tRC(key,type){if(type==='normal'){caughtRegional[key]?delete caughtRegional[key]:caughtRegional[key]=true;}else{shinyRegional[key]?delete shinyRegional[key]:shinyRegional[key]=true;}saveAll();updateRegionalStats();renderRegionalGrid();const r=document.getElementById('dcr');if(r)r.innerHTML=buildRCR(key);}
+function updateRegionalStats(){const c=REGIONAL_FORMS.filter(p=>caughtRegional[p.key]).length,s=REGIONAL_FORMS.filter(p=>shinyRegional[p.key]).length,total=REGIONAL_FORMS.length;document.getElementById('reg-caught').textContent=`Cap: ${c}`;document.getElementById('reg-total').textContent=`Tot: ${total}`;document.getElementById('reg-percent').textContent=total?`${Math.round(c/total*100)}%`:'0%';document.getElementById('reg-shiny').textContent=`★ ${s}`;}
+function catchAllRegional(){filteredRegional.forEach(p=>caughtRegional[p.key]=true);saveAll();renderRegionalGrid();updateRegionalStats();}
+function resetRegional(){if(!confirm('¿Resetear regionales?'))return;filteredRegional.forEach(p=>{delete caughtRegional[p.key];delete shinyRegional[p.key];});saveAll();renderRegionalGrid();updateRegionalStats();}
+
+function renderExportStats(){document.getElementById('exp-normal').textContent=Object.keys(caught).length;document.getElementById('exp-shiny').textContent=Object.keys(shiny).length;document.getElementById('exp-regional').textContent=Object.keys(caughtRegional).length;document.getElementById('exp-notes').textContent=Object.keys(notes).length;}
+function bExp(){return{version:'2.0',exported:new Date().toISOString().split('T')[0],caught,shiny,notes,caughtRegional,shinyRegional};}
+function showMsg(m){const el=document.getElementById('export-msg');el.textContent=m;setTimeout(()=>el.textContent='',3000);}
+function exportJSON(){const b=new Blob([JSON.stringify(bExp(),null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`pokedex_${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(u);showMsg('✓ JSON exportado!');}
+function exportCSV(){const rows=[['ID','Nombre','Gen','Capturado','Shiny','Nota']];allPokemon.forEach(p=>{if(caught[p.id]||shiny[p.id]||notes[p.id])rows.push([p.id,p.name,GEN_RANGES[p.gen].n,caught[p.id]?'SI':'NO',shiny[p.id]?'SI':'NO',notes[p.id]||'']);});const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`pokedex_${new Date().toISOString().split('T')[0]}.csv`;a.click();URL.revokeObjectURL(u);showMsg('✓ CSV exportado!');}
+function exportText(){let t=`POKÉDEX — ${new Date().toLocaleDateString('es-AR')}\nCap: ${Object.keys(caught).length} | Shiny: ${Object.keys(shiny).length}\n\n`;allPokemon.filter(p=>caught[p.id]).forEach(p=>{t+=`#${String(p.id).padStart(4,'0')} ${p.name.toUpperCase()}${shiny[p.id]?' ★':''}${notes[p.id]?'\n  → '+notes[p.id]:''}\n`;});const b=new Blob([t],{type:'text/plain'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`pokedex_${new Date().toISOString().split('T')[0]}.txt`;a.click();URL.revokeObjectURL(u);showMsg('✓ TXT exportado!');}
+function copyToClipboard(){navigator.clipboard.writeText(JSON.stringify(bExp())).then(()=>showMsg('✓ Copiado!')).catch(()=>showMsg('✗ Error'));}
+function importData(){try{const d=JSON.parse(document.getElementById('import-textarea').value.trim());if(d.caught)caught=d.caught;if(d.shiny)shiny=d.shiny;if(d.notes)notes=d.notes;if(d.caughtRegional)caughtRegional=d.caughtRegional;if(d.shinyRegional)shinyRegional=d.shinyRegional;saveAll();updateStats();applyFilters();renderGrid();renderExportStats();document.getElementById('import-textarea').value='';showMsg('✓ Importado!');}catch(e){showMsg('✗ JSON inválido');}}
+
+function prevPage(){if(currentPage>0){currentPage--;renderGrid();window.scrollTo(0,0);}}
+function nextPage(){const max=Math.ceil(filteredPokemon.length/PAGE_SIZE)-1;if(currentPage<max){currentPage++;renderGrid();window.scrollTo(0,0);}}
+function catchAll(){const pool=currentGen>0?allPokemon.filter(p=>p.gen===currentGen):allPokemon;if(currentMode==='shiny')pool.forEach(p=>shiny[p.id]=true);else pool.forEach(p=>caught[p.id]=true);saveAll();updateStats();applyFilters();renderGrid();}
+function resetAll(){if(!confirm('¿Resetear?'))return;const pool=currentGen>0?allPokemon.filter(p=>p.gen===currentGen):allPokemon;if(currentMode==='shiny')pool.forEach(p=>delete shiny[p.id]);else pool.forEach(p=>delete caught[p.id]);saveAll();updateStats();applyFilters();renderGrid();}
+
+document.getElementById('search').addEventListener('input',()=>{currentPage=0;applyFilters();renderGrid();});
+document.getElementById('type-filter').addEventListener('change',()=>{currentPage=0;applyFilters();renderGrid();});
+
+loadPokedex();
+</script>
+</body>
+</html>
