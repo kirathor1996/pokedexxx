@@ -102,13 +102,13 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
   box-shadow:0 -4px 20px rgba(0,0,0,0.5);
 }
 .nav-btn{
-  flex:1;padding:16px 4px 14px;border:none;background:transparent;
-  color:var(--text3);font-family:var(--font);font-size:11px;font-weight:700;
-  display:flex;flex-direction:column;align-items:center;gap:6px;
-  cursor:pointer;transition:all 0.2s;position:relative;letter-spacing:0.3px;
+  flex:1;padding:13px 2px 11px;border:none;background:transparent;
+  color:var(--text3);font-family:var(--font);font-size:10px;font-weight:700;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;transition:all 0.2s;position:relative;letter-spacing:0.2px;
 }
-.nav-ico{font-size:24px;line-height:1;transition:all 0.2s;}
-.nav-lbl{font-size:11px;font-weight:700;letter-spacing:0.3px;}
+.nav-ico{font-size:21px;line-height:1;transition:all 0.2s;}
+.nav-lbl{font-size:10px;font-weight:700;letter-spacing:0.2px;}
 .nav-btn::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:transparent;border-radius:0 0 2px 2px;transition:all 0.2s;}
 .nav-btn.active{color:var(--red);}
 .nav-btn.active::after{background:var(--red);box-shadow:0 0 8px var(--red);}
@@ -1105,6 +1105,7 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
     <button class="nav-btn nb-shiny" onclick="setMode('shiny')"><span class="nav-ico">★</span><span class="nav-lbl">Shiny</span></button>
     <button class="nav-btn nb-team" onclick="setMode('team')"><span class="nav-ico">⚔</span><span class="nav-lbl">Equipo</span></button>
     <button class="nav-btn nb-breed" onclick="setMode('breeding')"><span class="nav-ico">🥚</span><span class="nav-lbl">Crianza</span></button>
+    <button class="nav-btn nb-notes" onclick="setMode('notes')"><span class="nav-ico">✎</span><span class="nav-lbl">Notas</span></button>
     <button class="nav-btn nb-export" onclick="setMode('export')"><span class="nav-ico">⬡</span><span class="nav-lbl">Datos</span></button>
   </nav>
 </div>
@@ -1188,29 +1189,65 @@ function speakPokedex(text,pokemonName){
   else{pendingVoice={text,name:pokemonName};}
 }
 
+function pickMaleVoice(){
+  const voices=window.speechSynthesis.getVoices();
+  if(!voices.length)return null;
+  // Priority list: best natural male Spanish voices across devices
+  const PREFER=[
+    // Android Google voices
+    v=>v.name==='Google español' && v.lang.startsWith('es'),
+    v=>v.name.includes('Jorge') && v.lang.startsWith('es'),
+    v=>v.name.includes('Diego') && v.lang.startsWith('es'),
+    v=>v.name.includes('Carlos') && v.lang.startsWith('es'),
+    v=>v.name.includes('Pablo') && v.lang.startsWith('es'),
+    v=>v.name.includes('Miguel') && v.lang.startsWith('es'),
+    // iOS voices
+    v=>v.name==='Mónica' && false, // skip
+    v=>v.name.includes('Javier') && v.lang.startsWith('es'),
+    v=>v.name.includes('Juan') && v.lang.startsWith('es'),
+    // Any Spanish not obviously female
+    v=>v.lang==='es-ES' && !/lucia|mónica|monica|elena|maria|female/i.test(v.name),
+    v=>v.lang==='es-MX' && !/female/i.test(v.name),
+    v=>v.lang.startsWith('es'),
+    // English male fallback
+    v=>v.lang==='en-US' && /david|mark|daniel|james|alex/i.test(v.name),
+    v=>v.lang.startsWith('en-') && !/female|zira|victoria|samantha/i.test(v.name),
+    v=>true // any voice
+  ];
+  for(const fn of PREFER){
+    const found=voices.find(fn);
+    if(found)return found;
+  }
+  return null;
+}
+
 function doSpeak(text,pokemonName){
   if(!voiceEnabled||!window.speechSynthesis||!text)return;
   window.speechSynthesis.cancel();
-  const utt=new SpeechSynthesisUtterance();
-  utt.text=pokemonName+'. '+text;
+
+  // Clean text for more natural reading
+  const cleanText=(pokemonName?pokemonName+'. ':'')+text
+    .replace(/([A-Z]{2,})/g,w=>w.split('').join(' ')) // expand acronyms
+    .replace(/\//g,' o ')
+    .replace(/\(/g,', ')
+    .replace(/\)/g,'');
+
+  const utt=new SpeechSynthesisUtterance(cleanText);
   utt.lang='es-ES';
-  utt.rate=0.9;   // natural speed
-  utt.pitch=0.85; // slightly low but not robotic
+  utt.rate=1.0;   // natural conversational speed
+  utt.pitch=1.0;  // natural pitch — no robotic effect
   utt.volume=1;
-  const voices=window.speechSynthesis.getVoices();
-  // Prefer male Spanish voices
-  const pick=
-    voices.find(v=>v.lang==='es-ES'&&/jorge|diego|carlos|pablo|antonio/i.test(v.name))||
-    voices.find(v=>v.lang==='es-MX'&&/juan|miguel|pablo/i.test(v.name))||
-    voices.find(v=>v.lang==='es-ES'&&!v.name.toLowerCase().includes('female')&&!v.name.toLowerCase().includes('lucía')&&!v.name.toLowerCase().includes('monica'))||
-    voices.find(v=>v.lang.startsWith('es'))||
-    voices.find(v=>v.lang.startsWith('en')&&/david|mark|daniel|james|male/i.test(v.name))||
-    voices.find(v=>!v.name.toLowerCase().includes('female'));
-  if(pick)utt.voice=pick;
-  const hack=setInterval(()=>{if(window.speechSynthesis.paused)window.speechSynthesis.resume();},500);
+
+  const voice=pickMaleVoice();
+  if(voice)utt.voice=voice;
+
+  // Chrome mobile resume hack
+  const hack=setInterval(()=>{
+    if(window.speechSynthesis.paused)window.speechSynthesis.resume();
+  },500);
+
   utt.onstart=()=>{
     const b=document.getElementById('voice-bar');if(b)b.classList.add('speaking');
-    // Pulse logo red while speaking
     const lc=document.getElementById('logo-circle');if(lc)lc.classList.add('speaking');
   };
   utt.onend=utt.onerror=()=>{
@@ -1255,7 +1292,7 @@ function isDesktop(){return window.innerWidth>=900;}
 // ── MODE / NAV ──
 function setMode(m){
   mode=m;
-  const mn=['normal','shiny','team','breeding','export'];
+  const mn=['normal','shiny','team','breeding','notes','export'];
   document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',mn[i]===m));
   const sn=['normal','shiny','regional','notes','team','breeding','export'];
   document.querySelectorAll('.sidebar-tab').forEach((b,i)=>b.classList.toggle('active',sn[i]===m));
@@ -1693,48 +1730,94 @@ function toggleMic(){
   }
 
   recognition=new SpeechRec();
-  recognition.lang='es-ES';
-  recognition.continuous=false;
+  // Detect device language preference but prefer Spanish
+  recognition.lang='es-AR'; // Argentine Spanish first for better local accent
+  recognition.continuous=true;  // keep listening until silence
   recognition.interimResults=true;
-  recognition.maxAlternatives=1;
+  recognition.maxAlternatives=3; // get multiple alternatives for better accuracy
+
+  let silenceTimer=null;
+  let lastTranscript='';
+  let finalTranscript='';
 
   recognition.onstart=()=>{
     isListening=true;
+    finalTranscript='';
+    lastTranscript='';
     const btn=document.getElementById('ai-mic-btn');
     const micMain=document.getElementById('mic-btn');
     const lbl=document.getElementById('ai-mic-label');
     const lc=document.getElementById('logo-circle');
     if(btn)btn.classList.add('active');
     if(micMain)micMain.classList.add('listening');
-    if(lbl)lbl.textContent='Escuchando...';
+    if(lbl)lbl.textContent='Escuchando... hablá';
     if(lc){lc.classList.remove('speaking');lc.classList.add('listening');}
     stopVoice();
   };
 
   recognition.onresult=(e)=>{
-    const interim=Array.from(e.results).map(r=>r[0].transcript).join('');
     const lbl=document.getElementById('ai-mic-label');
-    if(lbl)lbl.textContent=interim||'Escuchando...';
-    if(e.results[e.results.length-1].isFinal){
-      const final=e.results[e.results.length-1][0].transcript;
-      stopListening();
-      if(final.trim()){
-        addMsg('user',final);
-        askAI(final);
+    let interimText='';
+    let newFinal='';
+
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      // Pick best alternative (highest confidence)
+      let bestAlt=e.results[i][0];
+      for(let j=1;j<e.results[i].length;j++){
+        if(e.results[i][j].confidence>bestAlt.confidence)bestAlt=e.results[i][j];
+      }
+      if(e.results[i].isFinal){
+        newFinal+=bestAlt.transcript;
+      } else {
+        interimText+=bestAlt.transcript;
       }
     }
+
+    if(newFinal){
+      finalTranscript+=newFinal;
+      // Reset silence timer — send after 1.5s of silence
+      clearTimeout(silenceTimer);
+      silenceTimer=setTimeout(()=>{
+        if(finalTranscript.trim()){
+          stopListening();
+          addMsg('user',finalTranscript.trim());
+          askAI(finalTranscript.trim());
+          finalTranscript='';
+        }
+      },1500);
+    }
+
+    const display=(finalTranscript+interimText).trim();
+    if(lbl&&display)lbl.textContent=display;
+    else if(lbl)lbl.textContent='Escuchando...';
   };
 
   recognition.onerror=(e)=>{
+    clearTimeout(silenceTimer);
+    if(e.error==='no-speech'){
+      // No speech detected — just restart quietly
+      if(isListening){
+        try{recognition.stop();}catch(ex){}
+        setTimeout(()=>{if(isListening)try{recognition.start();}catch(ex){stopListening();}},200);
+      }
+      return;
+    }
     stopListening();
     if(e.error==='not-allowed'){
-      addMsg('assistant','Necesitás dar permiso al micrófono en tu navegador.');
+      addMsg('assistant','Necesitás dar permiso al micrófono. Andá a Configuración > Safari/Chrome > Micrófono.');
+    } else if(e.error==='network'){
+      addMsg('assistant','El reconocimiento de voz necesita internet. Verificá tu conexión.');
     } else {
-      addMsg('assistant','No pude escucharte. Intentá de nuevo o escribí tu pregunta.');
+      addMsg('assistant','No pude escucharte bien. Intentá de nuevo o escribí tu pregunta.');
     }
   };
 
-  recognition.onend=()=>stopListening();
+  recognition.onend=()=>{
+    // If still listening and no final result yet, restart
+    if(isListening&&!finalTranscript){
+      try{recognition.start();}catch(e){stopListening();}
+    }
+  };
 
   try{recognition.start();}
   catch(e){stopListening();}
