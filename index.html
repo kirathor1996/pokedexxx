@@ -50,8 +50,23 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
   border:2px solid rgba(255,255,255,0.5);
   box-shadow:0 0 12px rgba(0,140,255,0.7),0 0 24px rgba(0,140,255,0.3);
   flex-shrink:0;animation:pulse-blue 3s ease-in-out infinite;
+  transition:all 0.3s;cursor:pointer;
+}
+.logo-circle.speaking{
+  background:radial-gradient(circle at 38% 35%,#fff 0%,#ff6688 35%,#cc0022 70%);
+  border-color:rgba(255,100,100,0.8);
+  animation:pulse-red 0.5s ease-in-out infinite;
+  box-shadow:0 0 16px rgba(232,25,44,0.9),0 0 32px rgba(232,25,44,0.5);
+}
+.logo-circle.listening{
+  background:radial-gradient(circle at 38% 35%,#fff 0%,#88ffcc 35%,#00aa66 70%);
+  border-color:rgba(100,255,180,0.8);
+  animation:pulse-green 0.4s ease-in-out infinite;
+  box-shadow:0 0 16px rgba(0,255,136,0.9),0 0 32px rgba(0,255,136,0.5);
 }
 @keyframes pulse-blue{0%,100%{box-shadow:0 0 12px rgba(0,140,255,0.7);}50%{box-shadow:0 0 20px rgba(0,140,255,1),0 0 36px rgba(0,140,255,0.4);}}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 14px rgba(232,25,44,0.9),0 0 28px rgba(232,25,44,0.4);transform:scale(1);}50%{box-shadow:0 0 22px rgba(232,25,44,1),0 0 44px rgba(232,25,44,0.6);transform:scale(1.08);}}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 14px rgba(0,255,136,0.9),0 0 28px rgba(0,255,136,0.4);transform:scale(1);}50%{box-shadow:0 0 22px rgba(0,255,136,1),0 0 44px rgba(0,255,136,0.6);transform:scale(1.1);}}
 .logo-dots{display:flex;gap:4px;}
 .ld{width:8px;height:8px;border-radius:50%;}
 .ld-r{background:#E8192C;box-shadow:0 0 5px #E8192C;}
@@ -59,6 +74,14 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
 .ld-g{background:#00ff88;box-shadow:0 0 5px #00ff88;}
 .hdr-title{flex:1;text-align:center;font-family:var(--pixel);font-size:6px;color:var(--text2);letter-spacing:2px;}
 .hdr-title span{color:var(--red);text-shadow:0 0 10px rgba(232,25,44,0.5);}
+.mic-btn{
+  background:transparent;border:1px solid rgba(0,255,136,0.35);
+  color:var(--green);font-size:16px;width:32px;height:32px;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;flex-shrink:0;
+}
+.mic-btn.listening{background:var(--green);color:#000;box-shadow:0 0 12px rgba(0,255,136,0.6);animation:pulse-green 0.4s ease-in-out infinite;}
+.mic-btn:active{transform:scale(0.9);}
 .voice-toggle{
   background:transparent;border:1px solid var(--border-red);
   color:var(--red);font-size:16px;width:32px;height:32px;
@@ -79,13 +102,13 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
   box-shadow:0 -4px 20px rgba(0,0,0,0.5);
 }
 .nav-btn{
-  flex:1;padding:14px 4px 12px;border:none;background:transparent;
-  color:var(--text3);font-family:var(--pixel);font-size:5px;
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  cursor:pointer;transition:all 0.2s;position:relative;
+  flex:1;padding:16px 4px 14px;border:none;background:transparent;
+  color:var(--text3);font-family:var(--font);font-size:11px;font-weight:700;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;transition:all 0.2s;position:relative;letter-spacing:0.3px;
 }
-.nav-ico{font-size:20px;line-height:1;transition:all 0.2s;}
-.nav-lbl{font-size:5px;letter-spacing:0.5px;}
+.nav-ico{font-size:24px;line-height:1;transition:all 0.2s;}
+.nav-lbl{font-size:11px;font-weight:700;letter-spacing:0.3px;}
 .nav-btn::after{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:transparent;border-radius:0 0 2px 2px;transition:all 0.2s;}
 .nav-btn.active{color:var(--red);}
 .nav-btn.active::after{background:var(--red);box-shadow:0 0 8px var(--red);}
@@ -432,16 +455,194 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
   .detail-drawer.open{transform:translateX(-50%) translateY(0);}
   .bottom-nav{max-width:580px;left:50%;transform:translateX(-50%);}
 }
+
+/* ── TEAM SECTION ── */
+.team-subtitle{color:var(--text2);font-size:13px;margin-bottom:14px;font-weight:500;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.team-slot{
+  background:var(--bg2);border:2px dashed var(--border);border-radius:var(--r2);
+  padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;min-height:120px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+}
+.team-slot:hover{border-color:var(--red);background:var(--bg3);}
+.team-slot.filled{border-style:solid;border-color:var(--red-dim);background:linear-gradient(135deg,#160205,#0d0d0d);}
+.team-slot-num{position:absolute;top:6px;left:8px;color:var(--text3);font-size:10px;font-weight:700;}
+.team-slot-icon{font-size:28px;color:var(--text3);}
+.team-slot.filled .team-slot-icon{font-size:0;}
+.team-slot-lbl{color:var(--text3);font-size:10px;font-weight:700;text-transform:uppercase;}
+.team-slot.filled .team-slot-lbl{color:var(--text);font-size:10px;}
+.team-slot-img{width:60px;height:60px;image-rendering:pixelated;}
+.team-slot-name{color:var(--text);font-size:10px;font-weight:700;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;}
+.team-slot-types{display:flex;gap:3px;justify-content:center;margin-top:3px;flex-wrap:wrap;}
+.team-slot-tbadge{font-size:8px;font-weight:700;padding:1px 5px;border-radius:10px;}
+.team-slot-remove{position:absolute;top:4px;right:6px;color:var(--red);font-size:14px;cursor:pointer;opacity:0;transition:opacity 0.2s;line-height:1;padding:2px;}
+.team-slot.filled:hover .team-slot-remove{opacity:1;}
+.team-types-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.ttype-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:7px 8px;text-align:center;}
+.ttype-badge{font-family:var(--font);font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:4px;}
+.ttype-bar{height:4px;border-radius:2px;margin-top:4px;}
+
+/* Team search modal */
+.team-search-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:150;
+  display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(6px);
+}
+.team-search-modal.open{display:flex;}
+.tsm-inner{
+  background:var(--bg2);border:2px solid var(--red);
+  border-radius:20px 20px 0 0;padding:18px 16px 40px;
+  width:100%;max-width:560px;max-height:80vh;overflow-y:auto;
+}
+.tsm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.tsm-title{color:var(--text);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.tsm-close{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:18px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.team-search-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.tsm-poke{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 4px;text-align:center;cursor:pointer;transition:all 0.15s;}
+.tsm-poke:hover{border-color:var(--red);}
+.tsm-poke:active{transform:scale(0.93);}
+.tsm-poke img{width:52px;height:52px;image-rendering:pixelated;}
+.tsm-poke-name{color:var(--text2);font-size:9px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ── BREEDING SECTION ── */
+.breed-tabs{display:flex;gap:4px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;}
+.breed-tabs::-webkit-scrollbar{display:none;}
+.breed-tab{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:13px;font-weight:700;padding:8px 14px;cursor:pointer;border-radius:20px;white-space:nowrap;flex-shrink:0;transition:all 0.2s;}
+.breed-tab.active{background:var(--red-dim);border-color:var(--red);color:#fff;}
+.breed-sec{display:none;flex-direction:column;gap:12px;}
+.breed-sec.vis{display:flex;}
+.breed-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.breed-card-title{color:var(--text);font-size:15px;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.3px;}
+.breed-desc{color:var(--text2);font-size:14px;line-height:1.6;}
+.breed-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+.breed-step:last-child{margin-bottom:0;}
+.breed-num{background:var(--red);color:#fff;font-size:12px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.breed-step div{color:var(--text2);font-size:14px;line-height:1.5;flex:1;}
+.breed-step strong{color:var(--text);}
+.breed-step em{color:var(--cyan);font-style:normal;}
+.breed-card.breed-tip{background:rgba(232,25,44,0.04);border-color:var(--border-red);display:flex;gap:10px;align-items:flex-start;}
+.breed-tip-icon{font-size:20px;flex-shrink:0;}
+.breed-tip div{color:var(--text2);font-size:14px;line-height:1.5;}
+.breed-tip strong{color:var(--text);}
+.breed-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.breed-tag{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.breed-items{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.breed-item{background:var(--bg3);border-radius:var(--r);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;}
+.breed-item-name{color:var(--text);font-size:13px;font-weight:700;}
+.breed-item-desc{color:var(--text2);font-size:12px;}
+.nature-table{display:flex;flex-direction:column;gap:4px;margin-top:8px;}
+.nature-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;padding:6px 8px;border-radius:6px;font-size:13px;font-weight:600;}
+.nature-row.header{background:var(--bg3);color:var(--text2);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.nature-row:not(.header):hover{background:var(--bg3);}
+.nature-row span:first-child{color:var(--text);}
+
+/* Nav active colors for new tabs */
+.nb-team.active{color:#FF8C00;}
+.nb-team.active::after{background:#FF8C00;box-shadow:0 0 8px #FF8C00;}
+.nb-team.active .nav-ico{filter:drop-shadow(0 0 4px #FF8C00);}
+.nb-breed.active{color:#00D4AA;}
+.nb-breed.active::after{background:#00D4AA;box-shadow:0 0 8px #00D4AA;}
+.nb-breed.active .nav-ico{filter:drop-shadow(0 0 4px #00D4AA);}
+.sidebar-tab.st-team.active{background:rgba(255,140,0,0.08);border-color:rgba(255,140,0,0.3);color:#FF8C00;}
+.sidebar-tab.st-breed.active{background:rgba(0,212,170,0.08);border-color:rgba(0,212,170,0.3);color:#00D4AA;}
+
+/* ── AI CHAT MODAL ── */
+.ai-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:180;
+  display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(8px);
+}
+.ai-modal.open{display:flex;}
+.ai-modal-inner{
+  background:var(--bg2);border:2px solid var(--green);
+  border-radius:20px 20px 0 0;padding:18px 16px 36px;
+  width:100%;max-width:560px;max-height:85vh;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:0 -10px 40px rgba(0,255,136,0.15);
+}
+.ai-modal-header{display:flex;align-items:center;justify-content:space-between;}
+.ai-modal-title{color:var(--green);font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.ai-context{background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:var(--r);padding:8px 12px;font-size:12px;color:var(--text2);font-weight:600;}
+.ai-messages{
+  flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;
+  max-height:40vh;min-height:100px;padding-right:2px;
+}
+.ai-messages::-webkit-scrollbar{width:3px;}
+.ai-messages::-webkit-scrollbar-thumb{background:var(--green);border-radius:2px;}
+.ai-msg{padding:10px 13px;border-radius:var(--r);font-size:14px;line-height:1.5;max-width:92%;}
+.ai-msg-system{background:var(--bg3);color:var(--text2);align-self:center;text-align:center;font-size:13px;max-width:100%;}
+.ai-msg-user{background:var(--red-dim);border:1px solid var(--border-red);color:var(--text);align-self:flex-end;border-radius:var(--r) var(--r) 4px var(--r);}
+.ai-msg-ai{background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);color:var(--text);align-self:flex-start;border-radius:4px var(--r) var(--r) var(--r);}
+.ai-msg-loading{color:var(--green);font-size:13px;animation:blink 0.8s step-end infinite;}
+.ai-mic-area{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.ai-mic-btn{
+  width:56px;height:56px;border-radius:50%;border:2px solid var(--green);
+  background:rgba(0,255,136,0.08);color:var(--green);font-size:22px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.ai-mic-btn.active{background:var(--green);color:#000;animation:pulse-green 0.4s ease-in-out infinite;box-shadow:0 0 16px rgba(0,255,136,0.7);}
+.ai-mic-label{color:var(--text3);font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.ai-text-row{display:flex;gap:6px;flex:1;}
+.ai-text-input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:14px;padding:10px 12px;outline:none;border-radius:var(--r);transition:border-color 0.2s;}
+.ai-text-input:focus{border-color:var(--green);}
+.ai-send-btn{background:var(--green);border:none;color:#000;font-size:18px;font-weight:700;width:44px;height:44px;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ai-send-btn:active{opacity:0.8;}
+.ai-input-row{display:flex;flex-direction:column;gap:10px;}
+
+/* ── BREEDING OBJECTS ── */
+.breed-obj-section{margin-bottom:14px;}
+.breed-obj-section:last-child{margin-bottom:0;}
+.breed-obj-header{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:8px;padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+}
+.breed-obj-row{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.breed-obj-row:last-child{border-bottom:none;padding-bottom:0;}
+.breed-obj-icon{
+  width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;border:1px solid;
+}
+.breed-obj-info{flex:1;min-width:0;}
+.breed-obj-name{color:var(--text);font-size:14px;font-weight:700;margin-bottom:3px;}
+.breed-obj-who{color:var(--text3);font-size:11px;font-weight:600;letter-spacing:0.3px;margin-bottom:4px;text-transform:uppercase;}
+.breed-obj-highlight{color:var(--gold);font-weight:700;}
+.breed-obj-effect{color:var(--text2);font-size:13px;line-height:1.4;}
+.breed-obj-effect strong{color:var(--text);}
+
+/* Breeding setup diagram */
+.breed-setup-row{
+  display:flex;align-items:center;gap:10px;
+}
+.breed-setup-slot{
+  flex:1;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px 10px;text-align:center;
+}
+.breed-setup-label{color:var(--text3);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.breed-setup-icon{font-size:28px;margin-bottom:6px;}
+.breed-setup-obj{
+  background:var(--red-dim);border:1px solid var(--border-red);
+  color:var(--text);font-size:11px;font-weight:700;
+  padding:5px 8px;border-radius:6px;margin-bottom:6px;line-height:1.3;
+}
+.breed-setup-note{color:var(--text3);font-size:11px;line-height:1.4;}
+.breed-setup-arrow{color:var(--red);font-size:22px;font-weight:700;flex-shrink:0;}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="app-header">
     <div class="logo-wrap">
-      <div class="logo-circle"></div>
+      <div class="logo-circle" id="logo-circle" onclick="openAiModal()" title="Preguntar al Pokédex"></div>
       <div class="logo-dots"><div class="ld ld-r"></div><div class="ld ld-y"></div><div class="ld ld-g"></div></div>
     </div>
     <div class="hdr-title">POKÉDEX <span>NACIONAL</span></div>
+    <button class="mic-btn" id="mic-btn" onclick="startListening()" title="Hacé una pregunta">🎤</button>
     <button class="voice-toggle active" id="voice-toggle" onclick="toggleVoice()" title="Activar/desactivar voz">🔊</button>
   </header>
 
@@ -451,6 +652,8 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
       <button class="sidebar-tab st-shiny" onclick="setMode('shiny')"><span class="stab-ico">★</span>Shiny</button>
       <button class="sidebar-tab st-reg" onclick="setMode('regional')"><span class="stab-ico">◈</span>Regional</button>
       <button class="sidebar-tab st-notes" onclick="setMode('notes')"><span class="stab-ico">✎</span>Notas</button>
+      <button class="sidebar-tab st-team" onclick="setMode('team')"><span class="stab-ico">⚔</span>Equipo</button>
+      <button class="sidebar-tab st-breed" onclick="setMode('breeding')"><span class="stab-ico">🥚</span>Crianza</button>
       <button class="sidebar-tab st-export" onclick="setMode('export')"><span class="stab-ico">⬡</span>Datos</button>
     </nav>
 
@@ -589,14 +792,319 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
         <div class="exp-msg" id="exp-msg"></div>
       </div>
 
+      <!-- TEAM VIEW -->
+      <div id="view-team" style="display:none">
+        <div class="sec-title">⚔ MI EQUIPO POKÉMON</div>
+        <div class="team-subtitle">Seleccioná hasta 6 Pokémon para tu equipo</div>
+        <div class="team-grid" id="team-grid">
+          <div class="team-slot empty" onclick="openTeamSearch(0)"><div class="team-slot-num">1</div><div class="team-slot-icon">+</div><div class="team-slot-lbl">Vacío</div></div>
+          <div class="team-slot empty" onclick="openTeamSearch(1)"><div class="team-slot-num">2</div><div class="team-slot-icon">+</div><div class="team-slot-lbl">Vacío</div></div>
+          <div class="team-slot empty" onclick="openTeamSearch(2)"><div class="team-slot-num">3</div><div class="team-slot-icon">+</div><div class="team-slot-lbl">Vacío</div></div>
+          <div class="team-slot empty" onclick="openTeamSearch(3)"><div class="team-slot-num">4</div><div class="team-slot-icon">+</div><div class="team-slot-lbl">Vacío</div></div>
+          <div class="team-slot empty" onclick="openTeamSearch(4)"><div class="team-slot-num">5</div><div class="team-slot-icon">+</div><div class="team-slot-lbl">Vacío</div></div>
+          <div class="team-slot empty" onclick="openTeamSearch(5)"><div class="team-slot-num">6</div><div class="team-slot-icon">+</div><div class="team-slot-lbl">Vacío</div></div>
+        </div>
+        <div class="team-types-section" id="team-types-section" style="display:none">
+          <div class="sec-title" style="margin-top:16px">COBERTURA DE TIPOS</div>
+          <div class="team-types-grid" id="team-types-grid"></div>
+        </div>
+        <button class="fab-btn fab-reset" style="margin-top:12px;width:100%" onclick="clearTeam()">✕ Limpiar equipo</button>
+        <!-- Team search modal -->
+        <div class="team-search-modal" id="team-search-modal">
+          <div class="tsm-inner">
+            <div class="tsm-header">
+              <div class="tsm-title">Elegí un Pokémon</div>
+              <button class="tsm-close" onclick="closeTeamSearch()">✕</button>
+            </div>
+            <input class="search-box" id="team-search-input" placeholder="Buscar..." oninput="renderTeamSearch()" style="width:100%;margin-bottom:10px"/>
+            <div class="team-search-grid" id="team-search-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BREEDING VIEW -->
+      <div id="view-breeding" style="display:none">
+        <div class="sec-title">🥚 GUÍA DE CRIANZA</div>
+
+        <div class="breed-tabs">
+          <button class="breed-tab active" onclick="setBreedTab('eggs')">🥚 Huevos</button>
+          <button class="breed-tab" onclick="setBreedTab('ivs')">💎 IVs</button>
+          <button class="breed-tab" onclick="setBreedTab('evs')">⚡ EVs</button>
+          <button class="breed-tab" onclick="setBreedTab('nature')">🌿 Naturaleza</button>
+        </div>
+
+        <!-- EGGS TAB -->
+        <div class="breed-sec vis" id="bsec-eggs">
+
+          <!-- Pasos básicos -->
+          <div class="breed-card">
+            <div class="breed-card-title">¿Cómo criar huevos?</div>
+            <div class="breed-step"><span class="breed-num">1</span><div><strong>Elegí dos Pokémon compatibles</strong> — deben ser del mismo grupo de huevo o uno de ellos ser Ditto. Un macho y una hembra (o cualquiera con Ditto).</div></div>
+            <div class="breed-step"><span class="breed-num">2</span><div><strong>Equipales los objetos correctos</strong> — antes de dejarlos criar, equipá los brazaletes/objetos según lo que querés heredar (ver abajo).</div></div>
+            <div class="breed-step"><span class="breed-num">3</span><div><strong>Dejálos en la Guardería / Picnic</strong> — en Escarlata/Violeta hacés un picnic y el huevo aparece en la cesta. En otros juegos dejálos en la Guardería y caminá.</div></div>
+            <div class="breed-step"><span class="breed-num">4</span><div><strong>Incubá caminando</strong> — llevá un Pokémon con <em>Llama Viva</em> o <em>Magma Armor</em> para reducir los pasos a la mitad.</div></div>
+            <div class="breed-step"><span class="breed-num">5</span><div><strong>El huevo eclosiona</strong> — nace el Pokémon de la madre (o de Ditto) al nivel 1, con los IVs/naturaleza heredados.</div></div>
+          </div>
+
+          <!-- OBJETOS COMPLETOS -->
+          <div class="breed-card">
+            <div class="breed-card-title">🎽 Objetos para criar — guía completa</div>
+            <div class="breed-desc" style="margin-bottom:12px">Equipá estos objetos <strong>antes</strong> de dejar los Pokémon en la guardería. Cada padre puede llevar <strong>un objeto</strong>.</div>
+
+            <div class="breed-obj-section">
+              <div class="breed-obj-header">🔵 DESTINO NUDO — el más importante</div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(100,150,255,0.15);border-color:rgba(100,150,255,0.4)">🔵</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Destino Nudo</div>
+                  <div class="breed-obj-who">Equipárselo a: <span class="breed-obj-highlight">cualquiera de los dos padres</span></div>
+                  <div class="breed-obj-effect">El bebé hereda <strong>5 IVs</strong> de los padres (en vez de 3 por defecto). Fundamental para criar competitivo.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="breed-obj-section">
+              <div class="breed-obj-header">🔴 BRAZALETES — fijar IVs específicos</div>
+              <div class="breed-desc" style="margin-bottom:8px;font-size:12px">Equipáselos al padre que tenga el IV perfecto que querés pasar. Garantiza que ese IV se hereda siempre.</div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(255,100,100,0.15);border-color:rgba(255,100,100,0.4)">❤️</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Brazal Poder (PS)</div>
+                  <div class="breed-obj-who">Al padre con IV perfecto de <span class="breed-obj-highlight">PS / HP</span></div>
+                  <div class="breed-obj-effect">Hereda el IV de PS sin falta.</div>
+                </div>
+              </div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(255,140,0,0.15);border-color:rgba(255,140,0,0.4)">⚔️</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Pesa Poder (Ataque)</div>
+                  <div class="breed-obj-who">Al padre con IV perfecto de <span class="breed-obj-highlight">Ataque</span></div>
+                  <div class="breed-obj-effect">Hereda el IV de Ataque sin falta.</div>
+                </div>
+              </div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(100,200,100,0.15);border-color:rgba(100,200,100,0.4)">🛡️</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Cinturón Poder (Defensa)</div>
+                  <div class="breed-obj-who">Al padre con IV perfecto de <span class="breed-obj-highlight">Defensa</span></div>
+                  <div class="breed-obj-effect">Hereda el IV de Defensa sin falta.</div>
+                </div>
+              </div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(180,100,255,0.15);border-color:rgba(180,100,255,0.4)">🔮</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Lente Poder (Ataque Esp.)</div>
+                  <div class="breed-obj-who">Al padre con IV perfecto de <span class="breed-obj-highlight">Ataque Especial</span></div>
+                  <div class="breed-obj-effect">Hereda el IV de Ataque Especial sin falta.</div>
+                </div>
+              </div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(0,200,255,0.15);border-color:rgba(0,200,255,0.4)">💙</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Banda Poder (Defensa Esp.)</div>
+                  <div class="breed-obj-who">Al padre con IV perfecto de <span class="breed-obj-highlight">Defensa Especial</span></div>
+                  <div class="breed-obj-effect">Hereda el IV de Defensa Especial sin falta.</div>
+                </div>
+              </div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(255,220,0,0.15);border-color:rgba(255,220,0,0.4)">⚡</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Ancla Poder (Velocidad)</div>
+                  <div class="breed-obj-who">Al padre con IV perfecto de <span class="breed-obj-highlight">Velocidad</span></div>
+                  <div class="breed-obj-effect">Hereda el IV de Velocidad sin falta.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="breed-obj-section">
+              <div class="breed-obj-header">🟢 OTROS OBJETOS CLAVE</div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(0,255,136,0.15);border-color:rgba(0,255,136,0.4)">🌿</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Menta Encadenada</div>
+                  <div class="breed-obj-who">Al padre con la <span class="breed-obj-highlight">naturaleza deseada</span></div>
+                  <div class="breed-obj-effect">El bebé hereda la naturaleza de ese padre. Usalo siempre para controlar la naturaleza.</div>
+                </div>
+              </div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(255,200,0,0.15);border-color:rgba(255,200,0,0.4)">🥚</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Amuleto Encantado</div>
+                  <div class="breed-obj-who">Al <span class="breed-obj-highlight">Pokémon principal del equipo</span> (no al que cría)</div>
+                  <div class="breed-obj-effect">Aumenta la probabilidad de obtener Pokémon Shiny de 1/4096 a 1/683. Combinar con Método Masuda = 1/512.</div>
+                </div>
+              </div>
+              <div class="breed-obj-row">
+                <div class="breed-obj-icon" style="background:rgba(255,150,200,0.15);border-color:rgba(255,150,200,0.4)">🌀</div>
+                <div class="breed-obj-info">
+                  <div class="breed-obj-name">Onda Íncita</div>
+                  <div class="breed-obj-who">A la <span class="breed-obj-highlight">madre o Ditto</span></div>
+                  <div class="breed-obj-effect">El bebé puede nacer con un movimiento adicional que la madre sabe pero el padre no, útil para ataques especiales.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SETUP RECOMENDADO -->
+          <div class="breed-card">
+            <div class="breed-card-title">⚙️ Setup recomendado para 6 IVs perfectos</div>
+            <div class="breed-setup-row">
+              <div class="breed-setup-slot">
+                <div class="breed-setup-label">PADRE / DITTO</div>
+                <div class="breed-setup-icon">👨</div>
+                <div class="breed-setup-obj">🔵 Destino Nudo</div>
+                <div class="breed-setup-note">El que tiene más IVs perfectos lleva el Destino Nudo</div>
+              </div>
+              <div class="breed-setup-arrow">+</div>
+              <div class="breed-setup-slot">
+                <div class="breed-setup-label">MADRE</div>
+                <div class="breed-setup-icon">👩</div>
+                <div class="breed-setup-obj">⚔️ Brazalete del IV faltante</div>
+                <div class="breed-setup-note">La madre lleva el brazalete del IV que todavía necesitás fijar</div>
+              </div>
+            </div>
+            <div class="breed-card breed-tip" style="margin-top:10px;border-radius:8px">
+              <div class="breed-tip-icon">💡</div>
+              <div><strong>Método Masuda:</strong> si uno de los padres es de un juego en otro idioma (por ejemplo un Ditto japonés), la probabilidad de Shiny sube a <strong>1/683</strong>. Con Amuleto Encantado llega a <strong>1/512</strong>. Es el método más usado para cazar Shiny criando.</div>
+            </div>
+          </div>
+
+          <!-- GRUPOS DE HUEVO -->
+          <div class="breed-card">
+            <div class="breed-card-title">Grupos de huevo</div>
+            <div class="breed-desc">Los Pokémon solo pueden criar con otros del mismo grupo de huevo. Ditto puede criar con casi cualquier Pokémon. Los legendarios y bebés no crían.</div>
+            <div class="breed-tags">
+              <span class="breed-tag">Monstruo</span><span class="breed-tag">Agua 1</span><span class="breed-tag">Agua 2</span><span class="breed-tag">Agua 3</span>
+              <span class="breed-tag">Bicho</span><span class="breed-tag">Volador</span><span class="breed-tag">Campo</span><span class="breed-tag">Hada</span>
+              <span class="breed-tag">Vegetal</span><span class="breed-tag">Humanoide</span><span class="breed-tag">Mineral</span><span class="breed-tag">Amorfo</span>
+              <span class="breed-tag" style="border-color:rgba(232,25,44,0.4);color:var(--red)">Ditto ★</span><span class="breed-tag">Sin grupo</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- IVs TAB -->
+        <div class="breed-sec" id="bsec-ivs">
+          <div class="breed-card">
+            <div class="breed-card-title">¿Qué son los IVs?</div>
+            <div class="breed-desc">Los <strong>Valores Individuales (IVs)</strong> son números del 0 al 31 que determinan el potencial máximo de cada estadística. Un IV de 31 es perfecto.</div>
+          </div>
+          <div class="breed-card">
+            <div class="breed-card-title">Cómo obtener IVs perfectos</div>
+            <div class="breed-step"><span class="breed-num">1</span><div><strong>Conseguí un Ditto con buenos IVs</strong> — los Ditto de Territorios de Tera o intercambio online suelen tener 5-6 IVs perfectos.</div></div>
+            <div class="breed-step"><span class="breed-num">2</span><div><strong>Usá el Destino Nudo</strong> — hace que el bebé herede 5 IVs de los padres (en vez de 3).</div></div>
+            <div class="breed-step"><span class="breed-num">3</span><div><strong>Equipá la Franja Roja</strong> al padre que tenga el IV que querés fijar. Así ese IV se hereda siempre.</div></div>
+            <div class="breed-step"><span class="breed-num">4</span><div><strong>Repetí</strong> — cría varias generaciones hasta acumular los 6 IVs perfectos.</div></div>
+          </div>
+          <div class="breed-card breed-tip">
+            <div class="breed-tip-icon">💡</div>
+            <div><strong>Tip:</strong> En Escarlata/Violeta podés verificar los IVs en el Juicio del Boxeador (después de cierto punto del juego).</div>
+          </div>
+          <div class="breed-card">
+            <div class="breed-card-title">Objetos para IVs</div>
+            <div class="breed-items">
+              <div class="breed-item"><div class="breed-item-name">Destino Nudo</div><div class="breed-item-desc">Hereda 5 IVs de padres</div></div>
+              <div class="breed-item"><div class="breed-item-name">Franja HP/Atk/Def/SpA/SpD/Vel</div><div class="breed-item-desc">Fija ese IV específico al heredar</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EVs TAB -->
+        <div class="breed-sec" id="bsec-evs">
+          <div class="breed-card">
+            <div class="breed-card-title">¿Qué son los EVs?</div>
+            <div class="breed-desc">Los <strong>Puntos de Esfuerzo (EVs)</strong> se ganan al derrotar Pokémon. Cada estadística puede tener hasta <strong>252 EVs</strong> y el total máximo es <strong>510</strong>. 4 EVs = +1 punto en esa estadística al nivel 100.</div>
+          </div>
+          <div class="breed-card">
+            <div class="breed-card-title">Entrenamiento estándar</div>
+            <div class="breed-desc" style="margin-bottom:10px">La distribución más común es <strong>252 / 252 / 4</strong> en dos estadísticas clave.</div>
+            <div class="breed-step"><span class="breed-num">1</span><div><strong>Borrar EVs</strong> — usá Bayas (Pomaro, Aranja, etc.) o en nuevos juegos las bebidas de limpieza para resetear a 0.</div></div>
+            <div class="breed-step"><span class="breed-num">2</span><div><strong>Elegí qué entrenar</strong> — físico: Ataque + Velocidad o Defensa. Especial: Ataque Esp + Velocidad o Def Esp.</div></div>
+            <div class="breed-step"><span class="breed-num">3</span><div><strong>Vitaminas</strong> — usá hasta 10 Proteínas, Hierros, Carbonatos, etc. para obtener 100 EVs rápido.</div></div>
+            <div class="breed-step"><span class="breed-num">4</span><div><strong>Completá entrenando</strong> — derrotá Pokémon que den EVs en esa estadística. Equipá la <em>Pesa/Brazal/Cadena</em> para ganar 8 EVs por batalla.</div></div>
+          </div>
+          <div class="breed-card breed-tip">
+            <div class="breed-tip-icon">💡</div>
+            <div><strong>Tip:</strong> En Escarlata/Violeta podés hacer Raids de Tera para ganar EVs muy rápido. También los sandwiches de poder aumentan los EVs ganados.</div>
+          </div>
+          <div class="breed-card">
+            <div class="breed-card-title">Pokémon útiles para entrenar EVs</div>
+            <div class="breed-items">
+              <div class="breed-item"><div class="breed-item-name">Magikarp / Wishiwashi</div><div class="breed-item-desc">+1 Velocidad</div></div>
+              <div class="breed-item"><div class="breed-item-name">Machop / Makuhita</div><div class="breed-item-desc">+1 Ataque</div></div>
+              <div class="breed-item"><div class="breed-item-name">Geodude / Aron</div><div class="breed-item-desc">+1 Defensa</div></div>
+              <div class="breed-item"><div class="breed-item-name">Gastly / Misdreavus</div><div class="breed-item-desc">+1 Ataque Esp</div></div>
+              <div class="breed-item"><div class="breed-item-name">Tentacool / Wooper</div><div class="breed-item-desc">+1 Defensa Esp</div></div>
+              <div class="breed-item"><div class="breed-item-name">Chansey / Blissey</div><div class="breed-item-desc">+2/+3 PS</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NATURE TAB -->
+        <div class="breed-sec" id="bsec-nature">
+          <div class="breed-card">
+            <div class="breed-card-title">¿Qué son las naturalezas?</div>
+            <div class="breed-desc">Las <strong>naturalezas</strong> aumentan una estadística un <strong>10%</strong> y reducen otra un <strong>10%</strong>. Hay 5 neutrales que no cambian nada.</div>
+          </div>
+          <div class="breed-card">
+            <div class="breed-card-title">Naturalezas más usadas</div>
+            <div class="nature-table">
+              <div class="nature-row header"><span>Naturaleza</span><span style="color:var(--green)">+10%</span><span style="color:var(--red)">-10%</span></div>
+              <div class="nature-row"><span>Adamante</span><span style="color:var(--green)">Ataque</span><span style="color:var(--red)">Atq Esp</span></div>
+              <div class="nature-row"><span>Modesta</span><span style="color:var(--green)">Atq Esp</span><span style="color:var(--red)">Ataque</span></div>
+              <div class="nature-row"><span>Jolly</span><span style="color:var(--green)">Velocidad</span><span style="color:var(--red)">Atq Esp</span></div>
+              <div class="nature-row"><span>Timida</span><span style="color:var(--green)">Velocidad</span><span style="color:var(--red)">Ataque</span></div>
+              <div class="nature-row"><span>Osada</span><span style="color:var(--green)">Ataque</span><span style="color:var(--red)">Velocidad</span></div>
+              <div class="nature-row"><span>Quieta</span><span style="color:var(--green)">Atq Esp</span><span style="color:var(--red)">Velocidad</span></div>
+              <div class="nature-row"><span>Impávida</span><span style="color:var(--green)">Defensa</span><span style="color:var(--red)">Ataque</span></div>
+              <div class="nature-row"><span>Audaz</span><span style="color:var(--green)">Defensa</span><span style="color:var(--red)">Velocidad</span></div>
+            </div>
+          </div>
+          <div class="breed-card">
+            <div class="breed-card-title">Cómo elegir la naturaleza al criar</div>
+            <div class="breed-step"><span class="breed-num">1</span><div>Conseguí un Pokémon con la naturaleza deseada (puede ser el padre o la madre).</div></div>
+            <div class="breed-step"><span class="breed-num">2</span><div>Equipale el objeto <strong>Menta Encadenada</strong> — así el bebé hereda su naturaleza.</div></div>
+            <div class="breed-step"><span class="breed-num">3</span><div>En juegos modernos podés cambiar la naturaleza con <strong>Caramelos de Naturaleza</strong>.</div></div>
+          </div>
+          <div class="breed-card breed-tip">
+            <div class="breed-tip-icon">💡</div>
+            <div><strong>Tip:</strong> Para Pokémon físicos preferí Adamante o Jolly. Para especiales, Modesta o Timida. Para tanques, según el rol defensivo elegí Impávida o Audaz.</div>
+          </div>
+        </div>
+      </div>
+
+    <!-- AI CHAT MODAL -->
+    <div class="ai-modal" id="ai-modal">
+      <div class="ai-modal-inner">
+        <div class="ai-modal-header">
+          <div class="ai-modal-title">🎤 PREGUNTÁ AL POKÉDEX</div>
+          <button class="tsm-close" onclick="closeAiModal()">✕</button>
+        </div>
+        <div class="ai-context" id="ai-context"></div>
+        <div class="ai-messages" id="ai-messages">
+          <div class="ai-msg ai-msg-system">Hola! Podés preguntarme sobre el Pokémon que estás viendo, sus debilidades, movimientos, estrategias de crianza, o cualquier cosa sobre Pokémon.</div>
+        </div>
+        <div class="ai-input-row">
+          <div class="ai-mic-area" id="ai-mic-area">
+            <button class="ai-mic-btn" id="ai-mic-btn" onclick="toggleMic()">🎤</button>
+            <div class="ai-mic-label" id="ai-mic-label">Tocá para hablar</div>
+          </div>
+          <div class="ai-text-row">
+            <input class="ai-text-input" id="ai-text-input" placeholder="O escribí tu pregunta..." onkeydown="if(event.key==='Enter')sendAiQuestion()"/>
+            <button class="ai-send-btn" onclick="sendAiQuestion()">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     </main>
   </div>
 
   <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="setMode('normal')"><span class="nav-ico">◉</span><span class="nav-lbl">Normal</span></button>
+    <button class="nav-btn active" onclick="setMode('normal')"><span class="nav-ico">◉</span><span class="nav-lbl">Pokédex</span></button>
     <button class="nav-btn nb-shiny" onclick="setMode('shiny')"><span class="nav-ico">★</span><span class="nav-lbl">Shiny</span></button>
-    <button class="nav-btn nb-reg" onclick="setMode('regional')"><span class="nav-ico">◈</span><span class="nav-lbl">Regional</span></button>
-    <button class="nav-btn nb-notes" onclick="setMode('notes')"><span class="nav-ico">✎</span><span class="nav-lbl">Notas</span></button>
+    <button class="nav-btn nb-team" onclick="setMode('team')"><span class="nav-ico">⚔</span><span class="nav-lbl">Equipo</span></button>
+    <button class="nav-btn nb-breed" onclick="setMode('breeding')"><span class="nav-ico">🥚</span><span class="nav-lbl">Crianza</span></button>
     <button class="nav-btn nb-export" onclick="setMode('export')"><span class="nav-ico">⬡</span><span class="nav-lbl">Datos</span></button>
   </nav>
 </div>
@@ -643,7 +1151,20 @@ let cache={},rcache={},abCache={},spCache={},evoCache={};
 
 // ── VOICE ENGINE ──
 let voiceEnabled=true;
-let currentUtterance=null;
+let voiceUnlocked=false;
+let pendingVoice=null;
+
+// UNLOCK: Mobile browsers require a user gesture before speaking
+function unlockVoice(){
+  if(voiceUnlocked||!window.speechSynthesis)return;
+  voiceUnlocked=true;
+  const silent=new SpeechSynthesisUtterance(' ');
+  silent.volume=0;
+  silent.onend=()=>{if(pendingVoice){const{text,name}=pendingVoice;pendingVoice=null;doSpeak(text,name);}};
+  window.speechSynthesis.speak(silent);
+}
+document.addEventListener('touchstart',unlockVoice,{once:true,passive:true});
+document.addEventListener('click',unlockVoice,{once:true});
 
 function toggleVoice(){
   voiceEnabled=!voiceEnabled;
@@ -657,42 +1178,51 @@ function stopVoice(){
   if(window.speechSynthesis)window.speechSynthesis.cancel();
   const bar=document.getElementById('voice-bar');
   if(bar)bar.classList.remove('speaking');
+  pendingVoice=null;
 }
 
 function speakPokedex(text,pokemonName){
   if(!voiceEnabled||!window.speechSynthesis||!text)return;
   stopVoice();
-  // Small delay so drawer is visible first
-  setTimeout(()=>{
-    const utt=new SpeechSynthesisUtterance();
-    // Intro like Pokédex: "Pokémon: [name]. [description]"
-    utt.text=`${pokemonName}. ${text}`;
-    utt.lang='es-ES';
-    utt.rate=0.82;      // slightly slow = robotic feel
-    utt.pitch=0.6;      // lower pitch = more robotic
-    utt.volume=1;
-    // Try to pick a robotic/male voice
-    const voices=window.speechSynthesis.getVoices();
-    const esVoice=voices.find(v=>v.lang.startsWith('es')&&v.name.toLowerCase().includes('male'))
-      ||voices.find(v=>v.lang.startsWith('es'))
-      ||voices.find(v=>v.lang.startsWith('en'));
-    if(esVoice)utt.voice=esVoice;
-    utt.onstart=()=>{
-      const bar=document.getElementById('voice-bar');
-      if(bar)bar.classList.add('speaking');
-    };
-    utt.onend=utt.onerror=()=>{
-      const bar=document.getElementById('voice-bar');
-      if(bar)bar.classList.remove('speaking');
-    };
-    window.speechSynthesis.speak(utt);
-    currentUtterance=utt;
-  },600);
+  if(voiceUnlocked){setTimeout(()=>doSpeak(text,pokemonName),400);}
+  else{pendingVoice={text,name:pokemonName};}
 }
 
-// Voices need to be loaded async on some browsers
-if(window.speechSynthesis)window.speechSynthesis.getVoices();
-window.speechSynthesis&&window.speechSynthesis.addEventListener&&window.speechSynthesis.addEventListener('voiceschanged',()=>window.speechSynthesis.getVoices());
+function doSpeak(text,pokemonName){
+  if(!voiceEnabled||!window.speechSynthesis||!text)return;
+  window.speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance();
+  utt.text=pokemonName+'. '+text;
+  utt.lang='es-ES';
+  utt.rate=0.9;   // natural speed
+  utt.pitch=0.85; // slightly low but not robotic
+  utt.volume=1;
+  const voices=window.speechSynthesis.getVoices();
+  // Prefer male Spanish voices
+  const pick=
+    voices.find(v=>v.lang==='es-ES'&&/jorge|diego|carlos|pablo|antonio/i.test(v.name))||
+    voices.find(v=>v.lang==='es-MX'&&/juan|miguel|pablo/i.test(v.name))||
+    voices.find(v=>v.lang==='es-ES'&&!v.name.toLowerCase().includes('female')&&!v.name.toLowerCase().includes('lucía')&&!v.name.toLowerCase().includes('monica'))||
+    voices.find(v=>v.lang.startsWith('es'))||
+    voices.find(v=>v.lang.startsWith('en')&&/david|mark|daniel|james|male/i.test(v.name))||
+    voices.find(v=>!v.name.toLowerCase().includes('female'));
+  if(pick)utt.voice=pick;
+  const hack=setInterval(()=>{if(window.speechSynthesis.paused)window.speechSynthesis.resume();},500);
+  utt.onstart=()=>{
+    const b=document.getElementById('voice-bar');if(b)b.classList.add('speaking');
+    // Pulse logo red while speaking
+    const lc=document.getElementById('logo-circle');if(lc)lc.classList.add('speaking');
+  };
+  utt.onend=utt.onerror=()=>{
+    clearInterval(hack);
+    const b=document.getElementById('voice-bar');if(b)b.classList.remove('speaking');
+    const lc=document.getElementById('logo-circle');if(lc)lc.classList.remove('speaking');
+  };
+  window.speechSynthesis.speak(utt);
+}
+
+// Pre-load voices
+if(window.speechSynthesis){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();}
 
 // ── DATA ──
 async function loadPokedex(){
@@ -725,18 +1255,22 @@ function isDesktop(){return window.innerWidth>=900;}
 // ── MODE / NAV ──
 function setMode(m){
   mode=m;
-  const mn=['normal','shiny','regional','notes','export'];
+  const mn=['normal','shiny','team','breeding','export'];
   document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',mn[i]===m));
-  document.querySelectorAll('.sidebar-tab').forEach((b,i)=>b.classList.toggle('active',mn[i]===m));
+  const sn=['normal','shiny','regional','notes','team','breeding','export'];
+  document.querySelectorAll('.sidebar-tab').forEach((b,i)=>b.classList.toggle('active',sn[i]===m));
   document.getElementById('view-main').style.display=(m==='normal'||m==='shiny')?'block':'none';
   document.getElementById('view-reg').style.display=m==='regional'?'block':'none';
   document.getElementById('view-notes').style.display=m==='notes'?'block':'none';
   document.getElementById('view-export').style.display=m==='export'?'block':'none';
+  document.getElementById('view-team').style.display=m==='team'?'block':'none';
+  document.getElementById('view-breeding').style.display=m==='breeding'?'block':'none';
   if(!isDesktop())closeDrawer();
   stopVoice();
   if(m==='regional'){applyRegF();renderRegGrid();updateRegStats();}
   else if(m==='notes'){renderNotes();}
   else if(m==='export'){updateExportStats();}
+  else if(m==='team'){renderTeam();}
   else{applyF();renderGrid();updateStats();}
 }
 
@@ -961,7 +1495,266 @@ function resetAll(){if(!confirm('¿Resetear?'))return;const pool=gen>0?all.filte
 document.getElementById('search').addEventListener('input',()=>{page=0;applyF();renderGrid();});
 document.getElementById('type-filter').addEventListener('change',()=>{page=0;applyF();renderGrid();});
 
+// ── TEAM ──
+let team=ld('pdx_team',[null,null,null,null,null,null]);
+let teamSlotTarget=0;
+let teamCache={};
+
+function renderTeam(){
+  for(let i=0;i<6;i++){
+    const slot=document.getElementById('team-grid')?.children[i];
+    if(!slot)continue;
+    const p=team[i];
+    if(!p){
+      slot.className='team-slot empty';
+      slot.onclick=()=>openTeamSearch(i);
+      slot.innerHTML=`<div class="team-slot-num">${i+1}</div><div class="team-slot-icon">+</div><div class="team-slot-lbl">Vacío</div>`;
+    } else {
+      slot.className='team-slot filled';
+      slot.onclick=()=>openTeamSearch(i);
+      const types=(p.types||[]).map(t=>{const c=TC[t]||{bg:'#555',t:'#fff'};return `<span class="team-slot-tbadge" style="background:${c.bg};color:${c.t}">${t}</span>`;}).join('');
+      slot.innerHTML=`<div class="team-slot-num">${i+1}</div>
+        <span class="team-slot-remove" onclick="event.stopPropagation();removeFromTeam(${i})">✕</span>
+        <img class="team-slot-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png"/>
+        <div class="team-slot-name">${p.name.replace(/-/g,' ')}</div>
+        <div class="team-slot-types">${types}</div>`;
+    }
+  }
+  renderTeamTypes();
+}
+
+function renderTeamTypes(){
+  const filled=team.filter(Boolean);
+  const section=document.getElementById('team-types-section');
+  if(!section)return;
+  if(!filled.length){section.style.display='none';return;}
+  section.style.display='block';
+  const typeCount={};
+  filled.forEach(p=>(p.types||[]).forEach(t=>{typeCount[t]=(typeCount[t]||0)+1;}));
+  const grid=document.getElementById('team-types-grid');
+  grid.innerHTML=Object.entries(typeCount).sort((a,b)=>b[1]-a[1]).map(([t,n])=>{
+    const c=TC[t]||{bg:'#555',t:'#fff'};
+    const w=Math.round((n/6)*100);
+    return `<div class="ttype-card"><span class="ttype-badge" style="background:${c.bg};color:${c.t}">${t}</span><div style="font-size:11px;color:var(--text2)">${n} Pokémon</div><div class="ttype-bar" style="width:${w}%;background:${c.bg};opacity:0.6"></div></div>`;
+  }).join('');
+}
+
+function removeFromTeam(i){team[i]=null;saveTeam();renderTeam();}
+function saveTeam(){try{localStorage.setItem('pdx_team',JSON.stringify(team));}catch(e){}}
+function clearTeam(){if(!confirm('¿Limpiar el equipo?'))return;team=[null,null,null,null,null,null];saveTeam();renderTeam();}
+
+function openTeamSearch(slot){
+  teamSlotTarget=slot;
+  document.getElementById('team-search-modal').classList.add('open');
+  document.getElementById('team-search-input').value='';
+  renderTeamSearch();
+}
+function closeTeamSearch(){document.getElementById('team-search-modal').classList.remove('open');}
+
+function renderTeamSearch(){
+  const q=document.getElementById('team-search-input').value.toLowerCase().trim();
+  const results=all.filter(p=>!q||p.name.includes(q)||String(p.id).includes(q)).slice(0,40);
+  const grid=document.getElementById('team-search-grid');
+  grid.innerHTML=results.map(p=>`
+    <div class="tsm-poke" onclick="addToTeam(${p.id},'${p.name}','${p.url}')">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png" loading="lazy" onerror="this.style.visibility='hidden'"/>
+      <div class="tsm-poke-name">${p.name.replace(/-/g,' ')}</div>
+    </div>`).join('');
+}
+
+async function addToTeam(id,name,url){
+  let types=[];
+  if(cache[id]){types=cache[id].types.map(t=>t.type.name);}
+  else{try{const r=await fetch(url);const d=await r.json();cache[id]=d;types=d.types.map(t=>t.type.name);}catch(e){}}
+  team[teamSlotTarget]={id,name,types};
+  saveTeam();closeTeamSearch();renderTeam();
+}
+
+// ── BREEDING TABS ──
+function setBreedTab(tab){
+  document.querySelectorAll('.breed-tab').forEach((b,i)=>b.classList.toggle('active',['eggs','ivs','evs','nature'][i]===tab));
+  ['eggs','ivs','evs','nature'].forEach(t=>{const el=document.getElementById('bsec-'+t);if(el)el.classList.toggle('vis',t===tab);});
+}
+
+// ── AI POKÉDEX ASSISTANT ──
+let aiMessages=[];
+let recognition=null;
+let isListening=false;
+let currentContext='';
+
+function getContext(){
+  if(selPoke){
+    const p=all[selPoke.id-1];
+    const gen=p?GEN[p.gen].n:'';
+    const types=p&&p.types.length?p.types.join(', '):'desconocido';
+    return `Estás mirando a ${selPoke.name.replace(/-/g,' ')} (#${String(selPoke.id).padStart(4,'0')}, ${gen}, tipo: ${types}).`;
+  }
+  if(selReg) return `Estás mirando la forma ${selReg.region} de ${selReg.name}.`;
+  return 'Estás en la Pokédex Nacional.';
+}
+
+function openAiModal(){
+  currentContext=getContext();
+  document.getElementById('ai-context').textContent=currentContext;
+  document.getElementById('ai-modal').classList.add('open');
+  // Reset messages to initial
+  if(aiMessages.length===0){
+    document.getElementById('ai-messages').innerHTML=
+      '<div class="ai-msg ai-msg-system">Hola! Podés preguntarme sobre el Pokémon que estás viendo, sus debilidades, movimientos, estrategias o cualquier cosa sobre Pokémon.</div>';
+  }
+}
+function closeAiModal(){
+  document.getElementById('ai-modal').classList.remove('open');
+  stopListening();
+}
+
+function addMsg(role,text){
+  aiMessages.push({role,content:text});
+  const el=document.createElement('div');
+  el.className=role==='user'?'ai-msg ai-msg-user':'ai-msg ai-msg-ai';
+  el.textContent=text;
+  const msgs=document.getElementById('ai-messages');
+  msgs.appendChild(el);
+  msgs.scrollTop=msgs.scrollHeight;
+  return el;
+}
+
+async function sendAiQuestion(){
+  const input=document.getElementById('ai-text-input');
+  const q=input.value.trim();
+  if(!q)return;
+  input.value='';
+  addMsg('user',q);
+  await askAI(q);
+}
+
+async function askAI(question){
+  const msgs=document.getElementById('ai-messages');
+  const loadEl=document.createElement('div');
+  loadEl.className='ai-msg ai-msg-loading';
+  loadEl.textContent='Pensando...';
+  msgs.appendChild(loadEl);
+  msgs.scrollTop=msgs.scrollHeight;
+
+  // Logo listening state while waiting
+  const lc=document.getElementById('logo-circle');
+  if(lc)lc.classList.add('listening');
+
+  try{
+    const systemPrompt=`Sos el Pokédex, un asistente experto en Pokémon. Respondés de forma concisa (máximo 3-4 oraciones) en español argentino. Contexto actual: ${getContext()}. Enfocate en respuestas prácticas sobre debilidades, movimientos, crianza, estrategias competitivas y tips útiles.`;
+
+    const history=aiMessages.slice(-8).map(m=>({role:m.role,content:m.content}));
+
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:300,
+        system:systemPrompt,
+        messages:history
+      })
+    });
+
+    const data=await res.json();
+    loadEl.remove();
+    if(lc)lc.classList.remove('listening');
+
+    const answer=data.content?.[0]?.text||'Lo siento, no pude responder.';
+    addMsg('assistant',answer);
+
+    // Read the answer aloud
+    if(voiceEnabled){
+      stopVoice();
+      if(voiceUnlocked){doSpeak(answer,'');}
+      else{pendingVoice={text:answer,name:''};}
+    }
+  }catch(e){
+    loadEl.remove();
+    if(lc)lc.classList.remove('listening');
+    const errEl=addMsg('assistant','Necesito conexión a internet para responder. Intentá de nuevo.');
+    console.error('AI error:',e);
+  }
+}
+
+// ── MICROPHONE ──
+function startListening(){
+  openAiModal();
+  setTimeout(toggleMic,300);
+}
+
+function toggleMic(){
+  if(isListening){stopListening();return;}
+
+  const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SpeechRec){
+    addMsg('assistant','Tu navegador no soporta reconocimiento de voz. Escribí tu pregunta.');
+    return;
+  }
+
+  recognition=new SpeechRec();
+  recognition.lang='es-ES';
+  recognition.continuous=false;
+  recognition.interimResults=true;
+  recognition.maxAlternatives=1;
+
+  recognition.onstart=()=>{
+    isListening=true;
+    const btn=document.getElementById('ai-mic-btn');
+    const micMain=document.getElementById('mic-btn');
+    const lbl=document.getElementById('ai-mic-label');
+    const lc=document.getElementById('logo-circle');
+    if(btn)btn.classList.add('active');
+    if(micMain)micMain.classList.add('listening');
+    if(lbl)lbl.textContent='Escuchando...';
+    if(lc){lc.classList.remove('speaking');lc.classList.add('listening');}
+    stopVoice();
+  };
+
+  recognition.onresult=(e)=>{
+    const interim=Array.from(e.results).map(r=>r[0].transcript).join('');
+    const lbl=document.getElementById('ai-mic-label');
+    if(lbl)lbl.textContent=interim||'Escuchando...';
+    if(e.results[e.results.length-1].isFinal){
+      const final=e.results[e.results.length-1][0].transcript;
+      stopListening();
+      if(final.trim()){
+        addMsg('user',final);
+        askAI(final);
+      }
+    }
+  };
+
+  recognition.onerror=(e)=>{
+    stopListening();
+    if(e.error==='not-allowed'){
+      addMsg('assistant','Necesitás dar permiso al micrófono en tu navegador.');
+    } else {
+      addMsg('assistant','No pude escucharte. Intentá de nuevo o escribí tu pregunta.');
+    }
+  };
+
+  recognition.onend=()=>stopListening();
+
+  try{recognition.start();}
+  catch(e){stopListening();}
+}
+
+function stopListening(){
+  isListening=false;
+  if(recognition){try{recognition.stop();}catch(e){}recognition=null;}
+  const btn=document.getElementById('ai-mic-btn');
+  const micMain=document.getElementById('mic-btn');
+  const lbl=document.getElementById('ai-mic-label');
+  const lc=document.getElementById('logo-circle');
+  if(btn)btn.classList.remove('active');
+  if(micMain)micMain.classList.remove('listening');
+  if(lbl)lbl.textContent='Tocá para hablar';
+  if(lc)lc.classList.remove('listening');
+}
+
 loadPokedex();
+setTimeout(()=>{if(loaded)renderTeam();},1000);
 </script>
 
 <script>
