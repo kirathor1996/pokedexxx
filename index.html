@@ -44,7 +44,7 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
 
 /* ── HEADER ── */
 .logo-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.logo-circle{
+.logo-circle{z-index:101;position:relative;
   width:26px;height:26px;border-radius:50%;
   background:radial-gradient(circle at 38% 35%,#fff 0%,#88ccff 35%,#0055cc 70%);
   border:2px solid rgba(255,255,255,0.5);
@@ -632,6 +632,15 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
 }
 .breed-setup-note{color:var(--text3);font-size:11px;line-height:1.4;}
 .breed-setup-arrow{color:var(--red);font-size:22px;font-weight:700;flex-shrink:0;}
+
+.sidebar-ai-btn{
+  background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);
+  color:var(--green);font-family:var(--font);font-size:14px;font-weight:700;
+  padding:12px;cursor:pointer;border-radius:var(--r);text-align:center;
+  width:100%;transition:all 0.2s;margin-top:8px;
+}
+.sidebar-ai-btn:hover{background:rgba(0,255,136,0.15);}
+.sidebar-ai-btn:active{transform:scale(0.97);}
 </style>
 </head>
 <body>
@@ -655,6 +664,8 @@ html,body{font-family:var(--font);background:var(--bg);color:var(--text);height:
       <button class="sidebar-tab st-team" onclick="setMode('team')"><span class="stab-ico">⚔</span>Equipo</button>
       <button class="sidebar-tab st-breed" onclick="setMode('breeding')"><span class="stab-ico">🥚</span>Crianza</button>
       <button class="sidebar-tab st-export" onclick="setMode('export')"><span class="stab-ico">⬡</span>Datos</button>
+      <div style="flex:1"></div>
+      <button class="sidebar-ai-btn" onclick="openAiModal()">🎤 Preguntá al Pokédex</button>
     </nav>
 
     <main class="main" id="main">
